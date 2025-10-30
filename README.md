@@ -18,8 +18,9 @@ If u have questions/concerns/suggestions send nalang sa gc <br><br><br>
 After doing Steps 1 - 5, Create a pull request here in the github website (in our repository). With that, all members can review the edited 
 files one pushed and decide whether to merge it in the main branch. <br>
 
+(6) git pull origin *branch name* --> this pulls all of the files/folders from the branch you selected into your device<br><br>
+
 ***The main branch should always be WORKING, NO ERROR/S, and FINAL.*** <br><br>
 
-(6) git pull origin *branch name* --> this pulls all of the files/folders from the branch you selected into your device<br>
 
 
