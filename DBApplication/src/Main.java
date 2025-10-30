@@ -28,8 +28,8 @@ public class Main {
     public static void getCountryLanguage(String countryCode, String official){
         StringBuilder query = new StringBuilder();
         query.append (" SELECT *               ");
-        query.append (" FROM   Country Language");
-        query.append (" FROM   CountryCode = ? ");
+        query.append (" FROM   CountryLanguage");
+        query.append (" WHERE  CountryCode = ? "); //? means parameter holders
 
         if(official.equals("T") || official.equals("F"))
         {
@@ -37,9 +37,9 @@ public class Main {
         }
 
         try{
-            PreparedStatement = stmt; //PreparedStatement
+            PreparedStatement stmt; //PreparedStatement
             stmt = conn.prepareCall(query.toString());
-            query.toString(1, countryCode);
+            stmt.setString(1, countryCode); //parameter index always start at index 1
 
             if(official.equals("T") || official.equals("F"))
             {
@@ -48,6 +48,8 @@ public class Main {
 
             ResultSet rs; //this returns the result of the query
             rs = stmt.executeQuery(); //returns true if there is at least 1 record in the query
+
+            //stmt.executeUpdate(); For INSERT, DELETE, and UPDATE instructions. Tracking number of rows updated
 
             while(rs.next())
             {
@@ -61,14 +63,15 @@ public class Main {
             rs.close();
             stmt.close();
             conn.close();
+        } catch(SQLException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
     public static void main(String[] args) {
       System.out.println("Testing DB Connection...");
       connectDB();
-      getCountryLanguage("PHL", "F");
+      getCountryLanguage("PHL", "");
 
     }
-        
 }
