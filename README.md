@@ -2,7 +2,7 @@ Before you proceed w/ the github commands, ensure the ff: <br>
 - Download git on your device so that you can use git commands on your command prompt / terminal <br>
 - Create a folder for this project in your device <br>
 - Inside that folder / directory, follow these commands:<br>
-- (1) git clone *insert link of repository* --> this will copy abd save all files and folders in the main repository inside your device <br>
+- (1) git clone *insert link of repository* --> this will copy and save all files and folders in the main repository inside your device <br>
 - (2) cd main (so that you are in the main branch) <br> 
 - (3) git status (after which, ensure that you are on the main branch, then you are ready to go) <br> <br>
 
