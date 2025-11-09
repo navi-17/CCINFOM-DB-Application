@@ -170,10 +170,15 @@ public class WardManagement {
         public static void main(String[] args){
         WardManagement wardManagement = new WardManagement();
 
-       // Test ward
-       Ward ward = new Ward("3rd floor");
-       wardManagement.createWard(ward); // put ward in the database
+       // Test create ward
+//       Ward ward = new Ward("2nd floor");
+//       wardManagement.createWard(ward); // put ward in the database
 
+       // Test update ward
+//        wardManagement.updateWard(3, "1st Floor");
+
+       // Test delete ward
+       wardManagement.deleteWard(4);
         // Ward record
         wardManagement.viewWardRecords();
     }
