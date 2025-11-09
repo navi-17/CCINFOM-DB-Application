@@ -162,9 +162,9 @@ public class WardManagement {
 //        wardManagement.updateWard(3, "1st Floor");
 
        // Test delete ward
-       wardManagement.deleteWard(4);
-        // model.Ward record
-        wardManagement.viewWardRecords();
+//       wardManagement.deleteWard(3);
+//        // model.Ward record
+//        wardManagement.viewWardRecords();
     }
 
 
