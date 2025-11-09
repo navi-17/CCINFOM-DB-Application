@@ -9,7 +9,7 @@ public class NurseManagement {
     private Connection conn;
     PreparedStatement pstmt;
 
-    public boolean registerNurse(Nurse nurse) //create
+    public boolean registerNurse(Nurse nurse) //CREATE
     {
         try{
             //This is where we will put codes that will interact w/ database
@@ -25,7 +25,7 @@ public class NurseManagement {
             pstmt.setString(2, nurse.getFirstName());
             pstmt.setString(3, nurse.getContactNo());
 
-            pstmt.executeUpdate();
+            pstmt.executeUpdate(); //used for queries that modifies the table
             System.out.println("Record inserted successfully!");
 
 
@@ -42,7 +42,7 @@ public class NurseManagement {
         }
     }
 
-    public void viewNurseRecords()
+    public void viewNurseRecords() //READ
     {
         try{
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
@@ -51,7 +51,7 @@ public class NurseManagement {
             String sql = "SELECT * FROM nurse";
             pstmt = conn.prepareStatement(sql);
 
-            ResultSet rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();// used for queries that returns result
             while(rs.next())
             {
                 int nurseID = rs.getInt("nurse_id");
@@ -70,6 +70,76 @@ public class NurseManagement {
             System.out.println(e.getMessage());
         }
     }
+
+    public boolean updateNurseRecord(Nurse nurse)
+    {
+        try{
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connection to database successful!");
+
+            String sql = "UPDATE nurse SET n_firstname = ?, n_lastname = ?, contact_no = ? WHERE nurse_id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, nurse.getFirstName());
+            pstmt.setString(2, nurse.getLastName());
+            pstmt.setString(3, nurse.getContactNo());
+            pstmt.setInt(4, nurse.getNurseID());
+
+            int rowsAffected = pstmt.executeUpdate();
+
+            if(rowsAffected > 0)
+            {
+                System.out.println("Nurse with id = " + nurse.getNurseID() + " has been updated!");
+                pstmt.close();
+                conn.close();
+                return true;
+            }
+            else
+            {
+                System.out.println("Nurse record update failed.");
+                pstmt.close();
+                conn.close();
+                return false;
+            }
+
+
+        }catch(Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteNurseRecord(Nurse nurse) //DELETE
+    {
+        try{
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connection to database successful!");
+
+            String sql = "DELETE FROM nurse WHERE nurse_id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, nurse.getNurseID()); //1 is position placeholder of ? in sql variable. since 1 lang ung ?, it starts at 1
+
+            int rowsAffected = pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
+
+            if(rowsAffected > 0)
+            {
+                System.out.println("Nurse with id = " + nurse.getNurseID() + " deleted successfully!");
+                return true;
+            }
+            else
+            {
+                System.out.println("Nurse deletion failed");
+                return false;
+            }
+
+        }catch(Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
 
     public static void main(String[] args){
 //        Nurse nurse = new Nurse("Marta", "Lualdi", "+63 9645138314");
