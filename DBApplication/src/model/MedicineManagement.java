@@ -1,29 +1,32 @@
 package model;
-import java.sql.*;
 
-public class NurseShiftManagement {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+public class MedicineManagement {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/dbhospital";
     private static final String USER = "root";
     private static final String PASSWORD = "infom123";
     private Connection conn;
     PreparedStatement pstmt;
 
-    public boolean createNurseShift(NurseShift nurseShift)
+    public boolean createMedicineRecord(Medicine medicine)
     {
         try{
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connection to database successful!");
 
-            String sql = "INSERT INTO nurse_shift (nurse_id, shift_day, start_time, end_time) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO medicine (medicine_name, stock_qty) VALUES (?, ?)";
             pstmt = conn.prepareStatement(sql);
 
-            pstmt.setInt(1, nurseShift.getNurseID());
-            pstmt.setString(2, nurseShift.getShiftDay());
-            pstmt.setString(3, nurseShift.getStartTime());
-            pstmt.setString(4, nurseShift.getEndTime());
+            pstmt.setString(1, medicine.getMedicineName());
+            pstmt.setInt(2, medicine.getStockQty());
+
 
             pstmt.executeUpdate();
-            System.out.println("Nurse Shift Record inserted successfully!");
+            System.out.println("Medicine Record inserted successfully!");
 
             pstmt.close();
             conn.close();
@@ -35,25 +38,23 @@ public class NurseShiftManagement {
         }
     }
 
-    public void viewNurseShifts()
+    public void viewMedicineRecord()
     {
         try{
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connection to database successful!");
 
-            String sql = "SELECT * FROM nurse_shift";
+            String sql = "SELECT * FROM medicine";
             pstmt = conn.prepareStatement(sql);
 
             ResultSet rs = pstmt.executeQuery();// used for queries that returns result
             while(rs.next())
             {
-                int nsID = rs.getInt("nurseShift_id");
-                String nID = rs.getString("nurse_id");
-                String sday = rs.getString("shift_day");
-                String sTime = rs.getString("start_time");
-                String eTime = rs.getString("end_time");
+                int mID = rs.getInt("medicine_id");
+                String mName = rs.getString("medicine_name");
+                int stock = rs.getInt("stock_qty");
 
-                System.out.println(nsID + ", " + nID + ", " + sday + ", " + sTime + ", " + eTime);
+                System.out.println(mID + ", " + mName + ", " + stock);
             }
 
             pstmt.close();
@@ -65,24 +66,24 @@ public class NurseShiftManagement {
         }
     }
 
-    public boolean updateNurseShift(NurseShift ns)
+    public boolean updateMedicineRecord(Medicine medicine)
     {
         try{
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connection to database successful!");
 
-            String sql = "UPDATE nurse_shift SET shift_day = ?, start_time = ?, end_time = ?  WHERE nurseShift_id = ?";
+            String sql = "UPDATE medicine SET medicine_name = ?, stock_qty = ? WHERE medicine_id = ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, ns.getShiftDay());
-            pstmt.setString(2, ns.getStartTime());
-            pstmt.setString(3, ns.getEndTime());
-            pstmt.setInt(4, ns.getNurseShiftID());
+            pstmt.setString(1, medicine.getMedicineName());
+            pstmt.setInt(2, medicine.getStockQty());
+            pstmt.setInt(3,medicine.getMedicineID());
+
 
             int rowsAffected = pstmt.executeUpdate();
 
             if(rowsAffected > 0)
             {
-                System.out.println("\nNurseShift with id = " + ns.getNurseShiftID() + " has been updated!");
+                System.out.println("\n Medicine with id = " + medicine.getMedicineID() + " has been updated!");
                 pstmt.close();
                 conn.close();
                 return true;
@@ -95,22 +96,21 @@ public class NurseShiftManagement {
                 return false;
             }
 
-
         }catch(Exception e) {
             System.out.println(e.getMessage());
             return false;
         }
     }
 
-    public boolean deleteNurseShift(int nurseShiftID) //DELETE
+    public boolean deleteMedicineRecord(int medicineID) //DELETE
     {
         try{
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connection to database successful!");
 
-            String sql = "DELETE FROM nurse_shift WHERE nurseShift_id = ?";
+            String sql = "DELETE FROM medicine WHERE medicine_id = ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, nurseShiftID);
+            pstmt.setInt(1, medicineID);
 
             int rowsAffected = pstmt.executeUpdate();
 
@@ -119,12 +119,12 @@ public class NurseShiftManagement {
 
             if(rowsAffected > 0)
             {
-                System.out.println("NurseShift with id = " + nurseShiftID + " deleted successfully!");
+                System.out.println("Medicine with id = " + medicineID + " deleted successfully!");
                 return true;
             }
             else
             {
-                System.out.println("Nurse Shift deletion failed");
+                System.out.println("Medicine deletion failed");
                 return false;
             }
 
@@ -136,18 +136,21 @@ public class NurseShiftManagement {
 
 
 
+
+
     public static void main(String[] args)
     {
-//        NurseShift ns = new NurseShift(1003, "Monday", "07:00", "19:00");
-        NurseShiftManagement nsm = new NurseShiftManagement();
-        NurseShift updateNs = new NurseShift(5, 1003, "Tuesday", "09:00", "19:00");
+        Medicine medicine = new Medicine("Biogesic", 50);
+        MedicineManagement mm = new MedicineManagement();
 
-//        nsm.createNurseShift(ns);
-//        nsm.updateNurseShift(updateNs);
-//        nsm.deleteNurseShift(5);
-        nsm.viewNurseShifts();
+        Medicine updatedMed = new Medicine("Paracetamol", 100);
+        updatedMed.setMedicineID(4002);
 
-
+//        mm.createMedicineRecord(medicine);
+//        mm.updateMedicineRecord(updatedMed);
+//        mm.deleteMedicineRecord(4002);
+        mm.viewMedicineRecord();
     }
-
 }
+
+

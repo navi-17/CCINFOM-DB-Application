@@ -26,7 +26,7 @@ public class NurseManagement {
             pstmt.setString(3, nurse.getContactNo());
 
             pstmt.executeUpdate(); //used for queries that modifies the table
-            System.out.println("Record inserted successfully!");
+            System.out.println("Nurse Record inserted successfully!");
 
 
             //3. After executing query, store result in ResultSet
