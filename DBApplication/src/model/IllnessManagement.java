@@ -1,10 +1,11 @@
 package model;
+
 import java.sql.*;
 
 public class IllnessManagement {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/dbhospital";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/DB";
     private static final String USER = "root";
-    private static final String PASSWORD = "infom123";
+    private static final String PASSWORD = "KC379379";
     private Connection conn;
     PreparedStatement pstmt;
 
@@ -41,36 +42,36 @@ public class IllnessManagement {
         }
 
     }
-    public void viewIllnessRecords () // read
-    {
-        try {
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connection to database successful!");
+        public void viewIllnessRecords () // read
+        {
+            try {
+                conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+                System.out.println("Connection to database successful!");
 
-            String sql = "SELECT * FROM illness";
-            pstmt = conn.prepareStatement(sql);
+                String sql = "SELECT * FROM illness";
+                pstmt = conn.prepareStatement(sql);
 
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
 
-                int illness_id = rs.getInt("illness_id");
-                String illness_name = rs.getString("illness_name");
-                String category = rs.getString("category");
-                String illness_description = rs.getString("illness_description");
+                    int illness_id = rs.getInt("illness_id");
+                    String illness_name = rs.getString("illness_name");
+                    String category = rs.getString("category");
+                    String illness_description = rs.getString("illness_description");
 
-                System.out.println(illness_id + " " + illness_name + " " + category + " " + illness_description);
+                    System.out.println(illness_id + " " + illness_name + " " + category + " " + illness_description);
+                }
+
+                pstmt.close();
+                rs.close();
+                conn.close();
+
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
-
-            pstmt.close();
-            rs.close();
-            conn.close();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
-    }
 
-    public boolean updateIllness (Illness illness){
+        public boolean updateIllness (Illness illness){
         try {
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connection to database successful!");
@@ -103,7 +104,7 @@ public class IllnessManagement {
         }
     }
 
-    public boolean deleteIllness (Illness illness){
+        public boolean deleteIllness (Illness illness){
         String delete_sql = "DELETE FROM illness  WHERE illness_id = ?";
 
 
@@ -143,4 +144,5 @@ public class IllnessManagement {
         IllnessManagement  illnessManagement = new IllnessManagement();
         illnessManagement.viewIllnessRecords();
     }
+
 }

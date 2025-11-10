@@ -1,10 +1,11 @@
 package model;
+
 import java.sql.*;
 
 public class WardManagement {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/dbhospital";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/DB";
     private static final String USER = "root";
-    private static final String PASSWORD = "infom123";
+    private static final String PASSWORD = "KC379379";
     private Connection conn;
     PreparedStatement pstmt;
 
@@ -66,7 +67,7 @@ public class WardManagement {
         }
     }
 
-    public boolean updateWard(int ward_id, String newFloor) {
+    public boolean updateWard(Ward ward) {
         try {
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connection to database successful!");
@@ -74,17 +75,17 @@ public class WardManagement {
             String sql = "UPDATE ward SET floor = ? WHERE ward_id = ?";
             pstmt = conn.prepareStatement(sql);
 
-            pstmt.setString(1, newFloor); // new floor
-            pstmt.setInt(2, ward_id); // new ward id
+            pstmt.setString(1, ward.getFloor()); // new floor
+            pstmt.setInt(2, ward.getWard_id()); // new ward id
             int rowsAffected = pstmt.executeUpdate();
 
             if (rowsAffected > 0) {
-                System.out.println("Ward updated successfully!");
+                System.out.println("model.Ward updated successfully!");
                 pstmt.close();
                 conn.close();
                 return true;
             } else {
-                System.out.println("Ward ID not found.");
+                System.out.println("model.Ward ID not found.");
                 pstmt.close();
                 conn.close();
                 return false;
@@ -96,7 +97,7 @@ public class WardManagement {
         }
     }
 
-    public boolean deleteWard(int ward_id) {
+    public boolean deleteWard(Ward ward) {
         // SQL commands (check and delete)
 
         // business rule: check first if there are pateints in the ward
@@ -109,7 +110,7 @@ public class WardManagement {
             System.out.println("Connection to database successful!");
             pstmt = conn.prepareStatement(check_sql);
 
-            pstmt.setInt(1, ward_id);
+            pstmt.setInt(1, ward.getWard_id());
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next() && rs.getInt("patientCount") > 0) {
@@ -122,11 +123,11 @@ public class WardManagement {
 
             // if no patients
             pstmt = conn.prepareStatement(delete_sql);
-            pstmt.setInt(1, ward_id);
+            pstmt.setInt(1, ward.getWard_id());
             int rowsAffected = pstmt.executeUpdate();
 
             if (rowsAffected > 0) {
-                System.out.println("Ward deleted successfully!");
+                System.out.println("model.Ward deleted successfully!");
                 pstmt.close();
                 return true;
             } else {
@@ -150,15 +151,21 @@ public class WardManagement {
         }
     }
 
-    public static void main(String[] args){
+        public static void main(String[] args){
         WardManagement wardManagement = new WardManagement();
 
-        // Test ward
-        Ward ward = new Ward("3rd floor");
-        wardManagement.createWard(ward); // put ward in the database
+       // Test create ward
+//       model.Ward ward = new model.Ward("2nd floor");
+//       wardManagement.createWard(ward); // put ward in the database
 
-        // Ward record
-        wardManagement.viewWardRecords();
+       // Test update ward
+//        wardManagement.updateWard(3, "1st Floor");
+
+       // Test delete ward
+//       wardManagement.deleteWard(3);
+//        // model.Ward record
+//        wardManagement.viewWardRecords();
     }
+
 
 }
