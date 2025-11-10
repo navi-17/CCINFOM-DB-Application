@@ -1,0 +1,149 @@
+package model;
+import java.sql.*;
+
+public class DiagnosisManagement {
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/DB";
+    private static final String USER = "root";
+    private static final String PASSWORD = "KC379379";
+    private Connection conn;
+    PreparedStatement pstmt;
+
+    public boolean createDiagnosisRecord(int phySchedID, int pID, int illID, String diagnosis_date, String notes)
+    {
+        try{
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connection to database successful!");
+
+            String sql = "INSERT INTO diagnosis (patient_id, physicianSchedule_id, illness_id, diagnosis_date, notes) VALUES (?, ?, ?, ?, ?)";
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, pID);
+            pstmt.setInt(2, phySchedID);
+            pstmt.setInt(3, illID);
+            pstmt.setString(4, diagnosis_date);
+            pstmt.setString(5, notes);
+
+            pstmt.executeUpdate();
+            System.out.println("Diagnosis Record inserted successfully!");
+
+            pstmt.close();
+            conn.close();
+            return true;
+
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public void viewPatientDiagnosis() //READ
+    {
+        try{
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connection to database successful!");
+
+            String sql = "SELECT * FROM diagnosis";
+            pstmt = conn.prepareStatement(sql);
+
+            ResultSet rs = pstmt.executeQuery();// used for queries that returns result
+            while(rs.next())
+            {
+                int diagnosisID = rs.getInt("diagnosis_id");
+                int pID = rs.getInt("patient_id");
+                int phySchedID = rs.getInt("physicianSchedule_id");
+                int illID = rs.getInt("illness_id");
+                String diagnosis_date = rs.getString("diagnosis_date");
+                String notes = rs.getString("notes");
+
+                System.out.println(diagnosisID + ", " + pID + ", " + phySchedID + ", " + illID + ", " + diagnosis_date + ", " + notes);
+            }
+
+            pstmt.close();
+            rs.close();
+            conn.close();
+
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public boolean updateDiagnosisRecord(Diagnosis diagnosis)
+    {
+        try{
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connection to database successful!");
+
+            String sql = "UPDATE diagnosis SET patient_id = ?, physicianSchedule_id = ?, illness_id = ?, diagnosis_date = ?, notes = ? WHERE diagnosis_id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, diagnosis.getPatient_id());
+            pstmt.setInt(2, diagnosis.getPhysicianSchedule_id());
+            pstmt.setInt(3, diagnosis.getIllness_id());
+            pstmt.setString(4, diagnosis.getDiagnosis_date());
+            pstmt.setString(5, diagnosis.getNotes());
+            pstmt.setInt(6, diagnosis.getDiagnosis_id());
+
+            int rowsAffected = pstmt.executeUpdate();
+
+            if(rowsAffected > 0)
+            {
+                System.out.println("Diagnosis with id = " + diagnosis.getDiagnosis_id() + " has been updated!");
+                pstmt.close();
+                conn.close();
+                return true;
+            }
+            else
+            {
+                System.out.println("Diagnosis record update failed.");
+                pstmt.close();
+                conn.close();
+                return false;
+            }
+
+
+        }catch(Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteDiagnosisRecord(int diagnosis_id) //DELETE
+    {
+        try{
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connection to database successful!");
+
+            String sql = "DELETE FROM diagnosis WHERE diagnosis_id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, diagnosis_id); //1 is position placeholder of ? in sql variable. since 1 lang ung ?, it starts at 1
+
+            int rowsAffected = pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
+
+            if(rowsAffected > 0)
+            {
+                System.out.println("Diagnosis record with id = " + diagnosis_id + " deleted successfully!");
+                return true;
+            }
+            else
+            {
+                System.out.println("Diagnosis deletion failed");
+                return false;
+            }
+
+        }catch(Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public static void main(String[] args)
+    {
+        DiagnosisManagement diagnosisManagement = new DiagnosisManagement();
+
+//        diagnosisManagement.createDiagnosisRecord()
+//        diagnosisManagement.viewPatientDiagnosis();
+
+    }
+}
