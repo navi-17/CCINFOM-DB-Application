@@ -3,6 +3,9 @@ import java.io.*;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 
 public class ASGui extends JFrame{
 
@@ -11,6 +14,7 @@ public class ASGui extends JFrame{
     private int screenHeight;
     private int mainWidth;
     private int sideWidth;
+    private String placeholder = "Search...";
     
     private JLayeredPane wholeScreen;
     private JLayeredPane mainPanel;
@@ -74,6 +78,8 @@ public class ASGui extends JFrame{
     private JButton lastPageButton;
     private JButton nextPageButton;
 
+    JTextField searchTextField;
+
     private ImageIcon backgroundImage = new ImageIcon("backgroundImage.png");
     private ImageIcon logoImage = new ImageIcon("globeIcon.png");
     private ImageIcon houseIcon = new ImageIcon("houseIcon.png");
@@ -86,6 +92,7 @@ public class ASGui extends JFrame{
     private ImageIcon searchIcon = new ImageIcon("searchIcon.png");
     private ImageIcon cancelIcon = new ImageIcon("cancelIcon.png");
 
+    private Font RobotoRegular;
     private Font RobotoBold;
     private Font MontserratBold;
 
@@ -93,7 +100,204 @@ public class ASGui extends JFrame{
     {
         createFonts();
 
-        // frames -----------------------------------------
+        // Columns and Data --------------------------------------
+
+        String[] attributes = {" ", "ID", "Patient Name", "Sex", "Birthdate", "Contact Number", 
+                            "Status", "Assigned Physician"};
+
+        Object[][] data = {{false, "12648273", new Object[]{profileIcon, "Sunwoo Han"}, "F", "January 01, 1999", "+63 927 636 2540", 
+                            "Admitted", "Dr. Tony Chopper"},
+                        {false, "12412600", new Object[]{profileIcon, "Li Zhao Yu"}, "M", "January 01, 1999", "+63 939 838 8404", 
+                            "Discharged", "Dr. Tony Chopper"},
+                        {false, "11428446", new Object[]{profileIcon, "Sabine Callas"}, "F", "January 01, 1999", "+63 927 636 2540", 
+                            "Admitted", "Dr. Tony Chopper"},
+                        {false, "11673941", new Object[]{profileIcon, "Vincent Fabron"}, "M", "January 01, 1999", "+63 939 838 8404", 
+                            "Discharged", "Dr. Tony Chopper"},
+                        {false, "12648273", new Object[]{profileIcon, "Sunwoo Han"}, "F", "January 01, 1999", "+63 927 636 2540", 
+                            "Admitted", "Dr. Tony Chopper"},
+                        {false, "12412600", new Object[]{profileIcon, "Li Zhao Yu"}, "M", "January 01, 1999", "+63 939 838 8404", 
+                            "Discharged", "Dr. Tony Chopper"},
+                        {false, "11428446", new Object[]{profileIcon, "Sabine Callas"}, "F", "January 01, 1999", "+63 927 636 2540", 
+                            "Admitted", "Dr. Tony Chopper"},
+                        {false, "11673941", new Object[]{profileIcon, "Vincent Fabron"}, "M", "January 01, 1999", "+63 939 838 8404", 
+                            "Discharged", "Dr. Tony Chopper"},
+                        {false, "12648273", new Object[]{profileIcon, "Sunwoo Han"}, "F", "January 01, 1999", "+63 927 636 2540", 
+                            "Admitted", "Dr. Tony Chopper"},
+                        {false, "12412600", new Object[]{profileIcon, "Li Zhao Yu"}, "M", "January 01, 1999", "+63 939 838 8404", 
+                            "Discharged", "Dr. Tony Chopper"}};
+
+        // JTable ------------------------------------------------
+
+        JTable table = new JTable(data, attributes){
+            @Override
+            public Class<?> getColumnClass(int column) {
+                if (column == 0) return Boolean.class;
+                return String.class;
+            }
+        };
+            table.setBounds(0,50,1226,680);
+            table.setFont(RobotoRegular.deriveFont(Font.PLAIN,14f));
+            table.setForeground(new Color(0x2e582e));
+            table.setRowHeight(68);
+            table.setShowVerticalLines(false);
+            table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            table.setIntercellSpacing(new Dimension(0, 0));
+            table.getColumnModel().setColumnMargin(0);
+
+            table.setRowSelectionAllowed(false);
+            table.setColumnSelectionAllowed(false);
+            table.setCellSelectionEnabled(true);
+
+        // Header ------------------------------------------------
+
+        JTableHeader header = table.getTableHeader();
+            header.setPreferredSize(new Dimension(1226, 48));
+            header.setBorder(BorderFactory.createEmptyBorder());
+            header.setResizingAllowed(false);
+
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() 
+        {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                        boolean isSelected, boolean hasFocus,
+                                                        int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+                label.setHorizontalAlignment(SwingConstants.LEFT);
+                label.setFont(RobotoBold.deriveFont(Font.BOLD,14f));
+                // label.setBackground(new Color(0xd5e3d5));
+                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
+                // label.setOpaque(true);
+                return label;
+            }
+        };
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+        }
+
+        // Checkbox ----------------------------------------------
+        
+        TableColumn selectCol = table.getColumnModel().getColumn(0);
+            selectCol.setCellRenderer(new DefaultTableCellRenderer()
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                            boolean isSelected, boolean hasFocus,
+                                                            int row, int column) {
+                    JCheckBox checkBox = new JCheckBox();
+                    if (value instanceof Boolean) {
+                        checkBox.setSelected((Boolean) value);
+                    }
+                    checkBox.setHorizontalAlignment(SwingConstants.CENTER);
+                    checkBox.setBackground(table.getBackground());
+
+                    JPanel panel = new JPanel(new BorderLayout());
+                    panel.add(checkBox, BorderLayout.CENTER);
+                    panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, table.getGridColor())); // horizontal line only
+                    if (isSelected) panel.setBackground(table.getSelectionBackground());
+
+                    return panel;
+                    }
+            });
+        
+        // Name --------------------------------------------------
+
+        TableColumn nameCol = table.getColumnModel().getColumn(2);
+            nameCol.setCellRenderer(new DefaultTableCellRenderer()
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                            boolean isSelected, boolean hasFocus,
+                                                            int row, int column) {
+                    JPanel panel = new JPanel(new BorderLayout());
+                        panel.setOpaque(true);
+                        panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+
+                    if (value instanceof Object[]) {
+                        Object[] arr = (Object[]) value;
+                        ImageIcon profileIcon = (ImageIcon) arr[0];
+                        String name = (String) arr[1];
+
+                        JLabel label = new JLabel(name);
+                        label.setIcon(profileIcon);
+                        label.setIconTextGap(10);
+                        label.setFont(RobotoRegular.deriveFont(Font.PLAIN, 14f));
+                        label.setForeground(new Color(0x2e582e));
+                        label.setHorizontalAlignment(SwingConstants.LEFT);
+
+                        panel.add(label, BorderLayout.CENTER);
+
+                        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, table.getGridColor()));
+                    }
+                    return panel;
+                }
+            });
+
+        // Status ------------------------------------------------
+
+        TableColumn statusCol = table.getColumnModel().getColumn(6);
+            statusCol.setCellRenderer(new DefaultTableCellRenderer() 
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                            boolean isSelected, boolean hasFocus,
+                                                            int row, int column) {
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(
+                            table, value, isSelected, hasFocus, row, column);
+
+                    // Set text color based on status
+                    if (value != null) {
+                        String status = value.toString();
+                        if (status.equalsIgnoreCase("Admitted")) {
+                            label.setForeground(new Color(0, 128, 0)); // green
+                        } else if (status.equalsIgnoreCase("Discharged")) {
+                            label.setForeground(Color.RED);
+                        } else {
+                            label.setForeground(Color.BLACK);
+                        }
+                    }
+                    return label;
+                }
+            });
+
+        // Column Width ------------------------------------------
+
+        table.getColumnModel().getColumn(0).setPreferredWidth(104); // Checkbox
+        table.getColumnModel().getColumn(1).setPreferredWidth(120); // ID
+        table.getColumnModel().getColumn(2).setPreferredWidth(250); // Name
+        table.getColumnModel().getColumn(3).setPreferredWidth(100); // Sex
+        table.getColumnModel().getColumn(4).setPreferredWidth(160); // Birthdate
+        table.getColumnModel().getColumn(5).setPreferredWidth(160); // Contact
+        table.getColumnModel().getColumn(6).setPreferredWidth(120); // Status
+        table.getColumnModel().getColumn(7).setPreferredWidth(210); // Physician
+        
+        // Scroll Pane -------------------------------------------
+
+        JScrollPane scrollPane = new JScrollPane(table);
+            scrollPane.setBounds(0,0,1226,750);
+
+        // Select Button -----------------------------------------
+
+        JButton selectAllBtn = new JButton("Select All");
+        selectAllBtn.setBounds(10, 760, 120, 30);
+        selectAllBtn.addActionListener(e -> {
+            for (int i = 0; i < table.getRowCount(); i++) {
+                table.setValueAt(true, i, 0); // check all checkboxes
+            }
+        });
+
+        // Deselect Button ---------------------------------------
+
+        JButton deselectAllBtn = new JButton("Deselect All");
+        deselectAllBtn.setBounds(140, 760, 120, 30);
+        deselectAllBtn.addActionListener(e -> {
+            for (int i = 0; i < table.getRowCount(); i++) {
+                table.setValueAt(false, i, 0); // uncheck all checkboxes
+            }
+        });
+
+        // Frames ------------------------------------------------
         
         screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -150,7 +354,7 @@ public class ASGui extends JFrame{
         listBGPanel = new JPanel();
             listBGPanel.setLayout(null);
             listBGPanel.setBounds(60,184,1226,730); //(1346) lr60, t70&b100
-            listBGPanel.setBackground(Color.YELLOW);
+            listBGPanel.setBackground(Color.WHITE);
             listBGPanel.setOpaque(true);
 
             listAttributesPanel = new JPanel();
@@ -159,26 +363,26 @@ public class ASGui extends JFrame{
                 listAttributesPanel.setBackground(new Color(0xd5e3d5));
                 listAttributesPanel.setOpaque(true);
 
-            int y = 50;
+            // int y = 50; 
 
-            for(int i = 0; i < 11; i++)
-            {       
-                listPanel[i] = new JPanel();
+            // for(int i = 0; i < 11; i++)
+            // {       
+            //     listPanel[i] = new JPanel();
                 
-                listPanel[i].setLayout(null);
-                listPanel[i].setBounds(0,y,1226,68);
-                listPanel[i].setOpaque(true);
+            //     listPanel[i].setLayout(null);
+            //     listPanel[i].setBounds(0,y,1226,68);
+            //     listPanel[i].setOpaque(true);
 
-                if (i % 2 == 0)
-                    listPanel[i].setBackground(Color.WHITE);
-                else 
-                    listPanel[i].setBackground(new Color(0xd5e3d5));
+            //     if (i % 2 == 0)
+            //         listPanel[i].setBackground(Color.WHITE);
+            //     else 
+            //         listPanel[i].setBackground(new Color(0xd5e3d5));
 
-                listBGPanel.add(listPanel[i]);
-                y += 68;
-            }
+            //     listBGPanel.add(listPanel[i]);
+            //     y += 68;
+            // }
 
-        // labels -----------------------------------------
+        // Labels ------------------------------------------------
 
         logoLabel = new JLabel();
             logoLabel.setIcon(logoImage);
@@ -229,7 +433,7 @@ public class ASGui extends JFrame{
             profileNameLabel.setText("Ian Lopez");
             profileNameLabel.setFont(RobotoBold.deriveFont(Font.BOLD,14f));
             profileNameLabel.setForeground(Color.WHITE);
-            profileNameLabel.setBackground(Color.YELLOW);
+            profileNameLabel.setBackground(Color.WHITE);
 
         profileJobLabel = new JLabel();
             profileJobLabel.setBounds(50,28,120,20);
@@ -245,12 +449,6 @@ public class ASGui extends JFrame{
             searchBarLabel.setBackground(new Color(0xd5e3d5));
             searchBarLabel.setBorder(BorderFactory.createEtchedBorder());
             searchBarLabel.setOpaque(true);
-
-        searchTextLabel = new JLabel();
-            searchTextLabel.setBounds(50,0,210,30);
-            searchTextLabel.setText("Search...");
-            searchTextLabel.setFont(RobotoBold.deriveFont(Font.BOLD,14f));
-            searchTextLabel.setForeground(new Color(0x2e582e));  
 
         sortByLabel = new JLabel();
             sortByLabel.setBounds(1046,10,190,30);
@@ -290,10 +488,39 @@ public class ASGui extends JFrame{
         backgroundLabel = new JLabel();
             backgroundLabel.setIcon(backgroundImage);
             backgroundLabel.setBounds(0,114,mainWidth,915);
-            backgroundLabel.setBackground(Color.YELLOW);
+            backgroundLabel.setBackground(Color.WHITE);
             backgroundLabel.setOpaque(true);
+
+        // Text Field --------------------------------------------
+
+        searchTextField = new JTextField();
+            searchTextField.setBounds(50,0,210,30);
+            // searchTextField.setText("Search...");
+            searchTextField.setText(placeholder);
+            searchTextField.setFont(RobotoBold.deriveFont(Font.BOLD,14f));
+            searchTextField.setBorder(null);
+            searchTextField.setForeground(new Color(0x2e582e));  
+            searchTextField.setBackground(new Color(0xd5e3d5));  
+
+            searchTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+                @Override
+                public void focusGained(java.awt.event.FocusEvent e) {
+                    if (searchTextField.getText().equals(placeholder)) {
+                        searchTextField.setText("");
+                        searchTextField.setForeground(new Color(0x2e582e)); // normal text color
+                    }
+                }
+
+                @Override
+                public void focusLost(java.awt.event.FocusEvent e) {
+                    if (searchTextField.getText().isEmpty()) {
+                        searchTextField.setText(placeholder);
+                        searchTextField.setForeground(Color.GRAY);
+                    }
+                }
+            });
             
-        // buttons ----------------------------------------
+        // Buttons -----------------------------------------------
 
         dashboardButton = new JButton();
             dashboardButton.setBounds(30,126,240,40);
@@ -625,7 +852,7 @@ public class ASGui extends JFrame{
             nextPageButton.setBorder(BorderFactory.createEtchedBorder());
             nextPageButton.setFocusable(false);
 
-        // layouts ----------------------------------------
+        // Layouts -----------------------------------------------
 
         this.add(wholeScreen);
             wholeScreen.add(sidePanel);
@@ -659,7 +886,7 @@ public class ASGui extends JFrame{
                     topPanel2.add(pathLabel);
                     topPanel2.add(searchBarLabel);
                         searchBarLabel.add(searchButton);
-                        searchBarLabel.add(searchTextLabel);
+                        searchBarLabel.add(searchTextField);
                         searchBarLabel.add(cancelButton);
                     topPanel2.add(sortByLabel);
                         sortByLabel.add(sortByTextLabel);
@@ -667,7 +894,10 @@ public class ASGui extends JFrame{
                     topPanel2.add(filterByButton);
                 mainPanel.add(listBGPanel);
                     mainPanel.setLayer(listBGPanel, 10);
-                    listBGPanel.add(listAttributesPanel);
+                    listBGPanel.add(selectAllBtn);
+                    listBGPanel.add(deselectAllBtn);
+                    listBGPanel.add(scrollPane);
+                    // listBGPanel.add(listAttributesPanel);
                 mainPanel.add(entriesLabel);
                 mainPanel.add(listViewButton);
                 mainPanel.add(tileViewButton);
@@ -682,11 +912,18 @@ public class ASGui extends JFrame{
                 mainPanel.add(lastPageButton);
                 mainPanel.add(nextPageButton);
                 mainPanel.add(backgroundLabel);
-        this.add(backgroundLabel2);
     }
 
     public void createFonts()
     {
+        try{
+            RobotoRegular = Font.createFont(Font.TRUETYPE_FONT, new File("RobotoRegular.ttf")).deriveFont(50f);
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("RobotoRegular.ttf")));
+        }
+        catch(IOException | FontFormatException e){
+        }
+
         try{
             RobotoBold = Font.createFont(Font.TRUETYPE_FONT, new File("RobotoBold.ttf")).deriveFont(50f);
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
