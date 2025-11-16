@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class AdmissionManagement {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/dbhospital";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/dbhospital_final";
     private static final String USER = "root";
     private static final String PASSWORD = "password";
     private Connection conn;

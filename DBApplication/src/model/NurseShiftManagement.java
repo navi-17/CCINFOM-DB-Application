@@ -153,7 +153,7 @@ public class NurseShiftManagement {
         NurseShiftManagement nsm = new NurseShiftManagement();
         NurseShift updateNs = new NurseShift(1003, "Tuesday", "09:00", "19:00");
 
-        nsm.createNurseShift(ns);
+        nsm.createNurseShift(updateNs);
 //        nsm.updateNurseShift(updateNs);
 //        nsm.deleteNurseShift(5);
         nsm.viewNurseShifts();

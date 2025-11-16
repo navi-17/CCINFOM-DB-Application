@@ -150,13 +150,13 @@ public class PhysicianManagement {
 
     public static void main(String[] args)
     {
-//        Physician ph = new Physician("Meredith", "Gray", "+63 9166825678", "General");
+        Physician ph = new Physician("Meredith", "Gray", "+63 9166825678", "General");
         PhysicianManagement pm = new PhysicianManagement();
 
 //        Physician updatedPh = new Physician("Meredith", "Grey", "+63 9116685678", "General");
 //        updatedPh.setPhysician_id(2002);
 
-//        pm.createPhysicianRecord(ph);
+        pm.createPhysicianRecord(ph);
 //        pm.updatePhysicianRecord(updatedPh);
 //        pm.deletePhysicianRecord(2002);
         pm.viewPhysicianRecords();

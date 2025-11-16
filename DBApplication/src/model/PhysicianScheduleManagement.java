@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 
 public class PhysicianScheduleManagement {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/dbhospital";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/dbhospital_final";
     private static final String USER = "root";
     private static final String PASSWORD = "infom123";
     private Connection conn;
@@ -62,6 +62,7 @@ public class PhysicianScheduleManagement {
                 ps.setStart_time(rs.getString("start_time"));
                 ps.setEnd_time(rs.getString("end_time"));
 
+                physicianSchedules.add(ps);
 
                 int phsID = rs.getInt("physicianSchedule_id");
                 int phID = rs.getInt("physician_id");
@@ -78,7 +79,7 @@ public class PhysicianScheduleManagement {
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
-        
+
         return physicianSchedules;
     }
 
@@ -157,10 +158,10 @@ public class PhysicianScheduleManagement {
         PhysicianSchedule updateps = new PhysicianSchedule(2001, "Thursday", "10:00", "20:00");
 
 //        psm.createPhysicianSchedule(ps);
-        updateps.setPhysicianScheduleID(4);
+//        updateps.setPhysicianScheduleID(4);
 //        psm.updatePhysicianSchedule(updateps);
 
-        psm.deletePhysicianSchedule(updateps.getPhysicianScheduleID());
+//        psm.deletePhysicianSchedule(updateps.getPhysicianScheduleID());
         psm.viewPhysicianSchedule();
 
     }

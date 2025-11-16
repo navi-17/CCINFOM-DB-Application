@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NurseManagement {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/DB";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/dbhospital_final";
     private static final String USER = "root";
-    private static final String PASSWORD = "KC379379";
+    private static final String PASSWORD = "infom123";
     private Connection conn;
     PreparedStatement pstmt;
 
@@ -63,13 +63,14 @@ public class NurseManagement {
                 String ln = rs.getString("n_lastname");
                 String fn = rs.getString("n_firstname");
                 String no = rs.getString("contact_no");
+                nurses.add(nurse);
 
                 System.out.println(nurseID + ", " + ln + ", " + fn + ", " + no);
 
                 nurse.setLastName(rs.getString("n_lastname"));
                 nurse.setFirstName(rs.getString("n_firstname"));
                 nurse.setContact(rs.getString("contact_no"));
-                nurses.add(nurse);
+
             }
 
             pstmt.close();
@@ -157,7 +158,7 @@ public class NurseManagement {
         Nurse nurse = new Nurse("Marta", "Lualdi", "+63 9645138314");
         NurseManagement nurseMgmt = new NurseManagement();
 
-//        nurseMgmt.registerNurse(nurse);
+        nurseMgmt.registerNurse(nurse);
 //        nurseMgmt.deleteNurseRecord(1002);
         nurseMgmt.viewNurseRecords();
 

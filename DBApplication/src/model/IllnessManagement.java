@@ -6,9 +6,9 @@ import java.util.List;
 
 
 public class IllnessManagement {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/DB";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/dbhospital_final";
     private static final String USER = "root";
-    private static final String PASSWORD = "KC379379";
+    private static final String PASSWORD = "infom123";
     private Connection conn;
     PreparedStatement pstmt;
 
@@ -153,6 +153,9 @@ public class IllnessManagement {
     }
     public static void main(String[] args){
         IllnessManagement  illnessManagement = new IllnessManagement();
+
+        Illness illness = new Illness("Pneumonia", "Infectious Disease", "Severe inflammation of the lungs");
+        illnessManagement.createIllness(illness);
         illnessManagement.viewIllnessRecords();
     }
 

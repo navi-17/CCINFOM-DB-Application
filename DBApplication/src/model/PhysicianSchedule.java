@@ -17,7 +17,7 @@ public class PhysicianSchedule {
 
     public PhysicianSchedule(int id)
     {
-        physician_id = id;
+        physicianSchedule_id = id;
     }
 
     public void setPhysicianScheduleID(int phsID)

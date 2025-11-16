@@ -4,11 +4,12 @@ public class Ward {
         private int ward_id;
         private String floor;
         private int ward_no;
-        private String ward_status;
+        private String w_status;
 
-        public Ward(String floor, int wn){
+        public Ward(String floor, int wn, String status){
             this.floor = floor;
             ward_no = wn;
+            w_status = status;
         }
 
         public Ward(int id)
@@ -33,7 +34,7 @@ public class Ward {
 
         public void setStatus(String s)
         {
-            ward_status = s;
+            w_status = s;
         }
 
         public int getWard_id() {
@@ -51,7 +52,7 @@ public class Ward {
 
         public String getStatus()
         {
-            return ward_status;
+            return w_status;
         }
 
 
