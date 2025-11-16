@@ -943,9 +943,9 @@ public class ASGui extends JFrame{
 //    }
 
     public void createFonts() {
-        RobotoRegular = loadFont("/RobotoRegular.ttf", 50f);
-        RobotoBold = loadFont("/RobotoBold.ttf", 50f);
-        MontserratBold = loadFont("/MontserratBold.ttf", 50f);
+        RobotoRegular = loadFont("/resources/RobotoRegular.ttf", 50f);
+        RobotoBold = loadFont("/resources/RobotoBold.ttf", 50f);
+        MontserratBold = loadFont("/resources/MontserratBold.ttf", 50f);
     }
 
     private Font loadFont(String path, float size) {
