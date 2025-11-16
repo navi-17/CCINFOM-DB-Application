@@ -33,9 +33,9 @@ public class DischargeController implements ActionListener{
                 Discharge d = discharges.get(i);
 
                 data[i][0] = false;
-                data[i][1] = d.getDischarge_id();
-                data[i][2] = d.getAdmission_id();
-                data[i][3] = d.getDischarge_date();
+                data[i][1] = d.getDischargeID();
+                data[i][2] = d.getAdmissionID();
+                data[i][3] = d.getDischargeID();
             }
 
             String[] attributes = {" ", "Discharge ID", "Admission ID", "Discharge Date"};

@@ -157,7 +157,7 @@ public class AddDiagnosisDialog extends JDialog {
         }
 
         Diagnosis diagnosis = new Diagnosis(phySchedID, patientID, illnessID, diagnosisDate, notes);
-        boolean success = diagnosisMgmt.createDiagnosisRecord(phySchedID, patientID, illnessID, diagnosisDate, notes);
+        boolean success = diagnosisMgmt.createDiagnosisRecord(diagnosis);
 
         if (success) {
             JOptionPane.showMessageDialog(this, "Diagnosis added successfully!");

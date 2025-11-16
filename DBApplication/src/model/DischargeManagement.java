@@ -143,8 +143,8 @@ public class DischargeManagement {
     public static void main(String[] args)
     {
         DischargeManagement dischargeManagement = new DischargeManagement();
-        Discharge d = new Discharge(1, 8001, "2025-11-10");
-        dischargeManagement.createDischargeRecord(d);
+//        Discharge d = new Discharge(1, 8001, "2025-11-10");
+//        dischargeManagement.createDischargeRecord(d);
         dischargeManagement.viewDischargeRecord();
 
     }
