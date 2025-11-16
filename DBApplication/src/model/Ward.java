@@ -6,9 +6,10 @@ public class Ward {
         private int ward_no;
         private String ward_status;
 
-        public Ward(String floor, int wn){
+        public Ward(String floor, int wn, String wds){
             this.floor = floor;
             ward_no = wn;
+            ward_status = wds;
         }
 
         public void setWard_id(int id)
