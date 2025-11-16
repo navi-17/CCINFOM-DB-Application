@@ -1,6 +1,8 @@
 package model;
 
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class DischargeManagement {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/DB";
@@ -35,8 +37,9 @@ public class DischargeManagement {
         }
     }
 
-    public void viewDischargeRecord() //READ
+    public List<Discharge> viewDischargeRecord() //READ
     {
+        List<Discharge> discharges = new ArrayList<>();
         try{
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connection to database successful!");
@@ -47,6 +50,11 @@ public class DischargeManagement {
             ResultSet rs = pstmt.executeQuery();// used for queries that returns result
             while(rs.next())
             {
+                Discharge d = new Discharge(rs.getInt("discharge_id"));
+                d.setAdmission_id(rs.getInt("admission_id"));
+                d.setDischarge_date(rs.getString("discharge_date"));
+                discharges.add(d);
+
                 int discharge_id = rs.getInt("discharge_id");
                 int admission_id = rs.getInt("admission_id");
                 String discharge_date = rs.getString("discharge_date");
@@ -61,6 +69,7 @@ public class DischargeManagement {
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
+        return discharges;
     }
 
     public boolean updateDischargeRecord(Discharge discharge)
