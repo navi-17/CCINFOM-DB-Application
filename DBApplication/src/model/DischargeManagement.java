@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class DischargeManagement {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/DB";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/dbhospital_final";
     private static final String USER = "root";
-    private static final String PASSWORD = "KC379379";
+    private static final String PASSWORD = "infom123";
     private Connection conn;
     PreparedStatement pstmt;
 
-    public boolean createDischargeRecord(int admission_id, String discharge_date)
+    public boolean createDischargeRecord(Discharge d)
     {
         try{
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
@@ -21,8 +21,8 @@ public class DischargeManagement {
             String sql = "INSERT INTO discharge (admission_id, discharge_date) VALUES (?, ?)";
             pstmt = conn.prepareStatement(sql);
 
-            pstmt.setInt(1, admission_id);
-            pstmt.setString(2, discharge_date);
+            pstmt.setInt(1, d.getAdmission_id());
+            pstmt.setString(2, d.getDischarge_date());
 
             pstmt.executeUpdate();
             System.out.println("Discharge Record inserted successfully!");
@@ -143,9 +143,9 @@ public class DischargeManagement {
     public static void main(String[] args)
     {
         DischargeManagement dischargeManagement = new DischargeManagement();
-
-//        dischargeManagement.createDischargeRecord();
-//        dischargeManagement.viewDischargeRecord();
+        Discharge d = new Discharge(1, 8001, "2025-11-10");
+        dischargeManagement.createDischargeRecord(d);
+        dischargeManagement.viewDischargeRecord();
 
     }
 }

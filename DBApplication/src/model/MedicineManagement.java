@@ -156,7 +156,7 @@ public class MedicineManagement {
         Medicine updatedMed = new Medicine("Paracetamol", 100);
         updatedMed.setMedicineID(4002);
 
-//        mm.createMedicineRecord(medicine);
+        mm.createMedicineRecord(medicine);
 //        mm.updateMedicineRecord(updatedMed);
 //        mm.deleteMedicineRecord(4002);
         mm.viewMedicineRecord();

@@ -3,17 +3,17 @@ package view;
 import model.Patient;
 import model.PatientManagement;
 
-import java.awt.event.ActionListener;
 import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.*;
 import java.awt.*;
-import java.awt.image.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.ActionListener;
 
 public class ASGui extends JFrame{
 
@@ -24,13 +24,13 @@ public class ASGui extends JFrame{
     private int sideWidth;
     private String placeholder = "Search...";
 
+    private JScrollPane scrollPane;
     private JLayeredPane wholeScreen;
     private JLayeredPane mainPanel;
     private JLayeredPane sidePanel;
     private JPanel topPanel;
     private JPanel topPanel2;
     private JPanel listBGPanel;
-    private JPanel listPanel[] = new JPanel[11];
     private JPanel listAttributesPanel;
 
     private JLabel logoLabel;
@@ -43,14 +43,11 @@ public class ASGui extends JFrame{
     private JLabel profileJobLabel;
     private JLabel pathLabel;
     private JLabel searchBarLabel;
-    private JLabel searchTextLabel;
     private JLabel sortByLabel;
     private JLabel sortByTextLabel;
     private JLabel entriesLabel;
     private JLabel backgroundLabel;
-    private JLabel backgroundLabel2;
 
-    private JButton dashboardButton;
     private JButton patientButton;
     private JButton physicianButton;
     private JButton nurseButton;
@@ -60,10 +57,12 @@ public class ASGui extends JFrame{
 
     private JButton admissionButton;
     private JButton dischargeButton;
-    private JButton pAssignmentButton;
+    private JButton diagnosisButton;
     private JButton nAssignmentButton;
     private JButton treatmentButton;
-    private JButton recordsButton;
+
+    private JButton pScheduleButton;
+    private JButton nShiftButton;
 
     private JButton settingsButton;
     private JButton notificationButton;
@@ -88,22 +87,21 @@ public class ASGui extends JFrame{
 
     JTextField searchTextField;
 
-    private ImageIcon backgroundImage = new ImageIcon("backgroundImage.png");
-    private ImageIcon logoImage = new ImageIcon("globeIcon.png");
-    private ImageIcon houseIcon = new ImageIcon("houseIcon.png");
-    private ImageIcon personIcon = new ImageIcon("personIcon.png");
-    private ImageIcon profileIcon = new ImageIcon("profileIcon.png");
-    private ImageIcon settingsIcon = new ImageIcon("settingsIcon.png");
-    private ImageIcon bellIcon = new ImageIcon("bellIcon.png");
-    private ImageIcon dropdownIcon = new ImageIcon("dropdownIcon.png");
-    private ImageIcon dropdownIcon2 = new ImageIcon("dropdownIcon2.png");
-    private ImageIcon searchIcon = new ImageIcon("searchIcon.png");
-    private ImageIcon cancelIcon = new ImageIcon("cancelIcon.png");
+    private ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/backgroundImage.png"));
+    private ImageIcon logoImage = new ImageIcon(getClass().getResource("/globeIcon.png"));
+    private ImageIcon houseIcon = new ImageIcon(getClass().getResource("/houseIcon.png"));
+    private ImageIcon personIcon = new ImageIcon(getClass().getResource("/personIcon.png"));
+    private ImageIcon profileIcon = new ImageIcon(getClass().getResource("/profileIcon.png"));
+    private ImageIcon settingsIcon = new ImageIcon(getClass().getResource("/settingsIcon.png"));
+    private ImageIcon bellIcon = new ImageIcon(getClass().getResource("/bellIcon.png"));
+    private ImageIcon dropdownIcon = new ImageIcon(getClass().getResource("/dropdownIcon.png"));
+    private ImageIcon dropdownIcon2 = new ImageIcon(getClass().getResource("/dropdownIcon2.png"));
+    private ImageIcon searchIcon = new ImageIcon(getClass().getResource("/searchIcon.png"));
+    private ImageIcon cancelIcon = new ImageIcon(getClass().getResource("/cancelIcon.png"));
 
     private Font RobotoRegular;
     private Font RobotoBold;
     private Font MontserratBold;
-
 
     public ASGui()
     {
@@ -111,197 +109,73 @@ public class ASGui extends JFrame{
 
         // Columns and Data --------------------------------------
 
-        String[] attributes = {" ", "ID", "Patient Name", "Sex", "Birthdate", "Contact Number",
-                "Status", "Assigned Physician"};
-
         PatientManagement pm = new PatientManagement();
         List<Patient> patients = new ArrayList<>();
         patients = pm.viewPatientRecords();
 
-        Object[][] data = new Object[patients.size()][8];
-        for(int i = 0; i < patients.size(); i++)
-        {
-            Patient p = patients.get(i);
+        String[] attributes = {" ", "ID", "Patient Name", "Sex", "Birthdate", "Contact Number",
+                "Status"};
 
-            data[i][0] = false;
-            data[i][1] = p.getPatientID();
-            data[i][2] = new Object[]{ profileIcon, p.getLastName() + ", " + p.getFirstName()};
-            data[i][3] = p.getSex();
-            data[i][4] = p.getBirthDate();
-            data[i][5] = p.getContact();
-            data[i][6] = p.getStatus();
-            data[i][7] = p.getLastName();
-        }
+//        Object[][] data = {{false, "12648273", new Object[]{profileIcon, "Sunwoo Han"}, "F", "January 01, 1999", "+63 927 636 2540",
+//                "Admitted"},
+//                {false, "12412600", new Object[]{profileIcon, "Li Zhao Yu"}, "M", "January 01, 1999", "+63 939 838 8404",
+//                        "Discharged"},
+//                {false, "11428446", new Object[]{profileIcon, "Sabine Callas"}, "F", "January 01, 1999", "+63 927 636 2540",
+//                        "Admitted"},
+//                {false, "11673941", new Object[]{profileIcon, "Vincent Fabron"}, "M", "January 01, 1999", "+63 939 838 8404",
+//                        "Discharged"},
+//                {false, "12648273", new Object[]{profileIcon, "Sunwoo Han"}, "F", "January 01, 1999", "+63 927 636 2540",
+//                        "Admitted"},
+//                {false, "12412600", new Object[]{profileIcon, "Li Zhao Yu"}, "M", "January 01, 1999", "+63 939 838 8404",
+//                        "Discharged"},
+//                {false, "11428446", new Object[]{profileIcon, "Sabine Callas"}, "F", "January 01, 1999", "+63 927 636 2540",
+//                        "Admitted"},
+//                {false, "11673941", new Object[]{profileIcon, "Vincent Fabron"}, "M", "January 01, 1999", "+63 939 838 8404",
+//                        "Discharged"},
+//                {false, "12648273", new Object[]{profileIcon, "Sunwoo Han"}, "F", "January 01, 1999", "+63 927 636 2540",
+//                        "Admitted"},
+//                {false, "12412600", new Object[]{profileIcon, "Li Zhao Yu"}, "M", "January 01, 1999", "+63 939 838 8404",
+//                        "Discharged"}};
 
-        // JTable ------------------------------------------------
-        JTable table = new JTable(data, attributes){
-            @Override
-            public Class<?> getColumnClass(int column) {
-                if (column == 0) return Boolean.class;
-                return String.class;
-            }
-        };
-        table.setBounds(0,50,1226,680);
-        table.setFont(RobotoRegular.deriveFont(Font.PLAIN,14f));
-        table.setForeground(new Color(0x2e582e));
-        table.setRowHeight(68);
-        table.setShowVerticalLines(false);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        table.setIntercellSpacing(new Dimension(0, 0));
-        table.getColumnModel().setColumnMargin(0);
+//        Object[][] data = new Object[patients.size()][8];
+//        for(int i = 0; i < patients.size(); i++)
+//        {
+//            Patient p = patients.get(i);
 
-        table.setRowSelectionAllowed(false);
-        table.setColumnSelectionAllowed(false);
-        table.setCellSelectionEnabled(true);
+//            data[i][0] = false;
+//            data[i][1] = p.getPatientID();
+//            data[i][2] = new Object[]{ profileIcon, p.getLastName() + ", " + p.getFirstName()};
+//            data[i][3] = p.getSex();
+//            data[i][4] = p.getBirthDate();
+//            data[i][5] = p.getContact();
+//            data[i][6] = p.getStatus();
+//            data[i][7] = p.getLastName();
+//        }
+//
+//        Map<Integer, Integer> colWidths = Map.of(
+//                0, 106,  // checkbox
+//                1, 150,  // ID
+//                2, 260,  // Name
+//                3, 120,  // Sex
+//                4, 220,  // Birthdate
+//                5, 220,  // Contact
+//                6, 150  // Status
+//        );
 
-        // Header ------------------------------------------------
-
-        JTableHeader header = table.getTableHeader();
-        header.setPreferredSize(new Dimension(1226, 48));
-        header.setBorder(BorderFactory.createEmptyBorder());
-        header.setResizingAllowed(false);
-
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer()
-        {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
-                JLabel label = (JLabel) super.getTableCellRendererComponent(
-                        table, value, isSelected, hasFocus, row, column);
-                label.setHorizontalAlignment(SwingConstants.LEFT);
-                label.setFont(RobotoBold.deriveFont(Font.BOLD,14f));
-                // label.setBackground(new Color(0xd5e3d5));
-                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
-                // label.setOpaque(true);
-                return label;
-            }
-        };
-
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
-        }
-
-        // Checkbox ----------------------------------------------
-
-        TableColumn selectCol = table.getColumnModel().getColumn(0);
-        selectCol.setCellRenderer(new DefaultTableCellRenderer()
-        {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
-                JCheckBox checkBox = new JCheckBox();
-                if (value instanceof Boolean) {
-                    checkBox.setSelected((Boolean) value);
-                }
-                checkBox.setHorizontalAlignment(SwingConstants.CENTER);
-                checkBox.setBackground(table.getBackground());
-
-                JPanel panel = new JPanel(new BorderLayout());
-                panel.add(checkBox, BorderLayout.CENTER);
-                panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, table.getGridColor())); // horizontal line only
-                if (isSelected) panel.setBackground(table.getSelectionBackground());
-
-                return panel;
-            }
-        });
-
-        // Name --------------------------------------------------
-
-        TableColumn nameCol = table.getColumnModel().getColumn(2);
-        nameCol.setCellRenderer(new DefaultTableCellRenderer()
-        {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
-                JPanel panel = new JPanel(new BorderLayout());
-                panel.setOpaque(true);
-                panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
-
-                if (value instanceof Object[]) {
-                    Object[] arr = (Object[]) value;
-                    ImageIcon profileIcon = (ImageIcon) arr[0];
-                    String name = (String) arr[1];
-
-                    JLabel label = new JLabel(name);
-                    label.setIcon(profileIcon);
-                    label.setIconTextGap(10);
-                    label.setFont(RobotoRegular.deriveFont(Font.PLAIN, 14f));
-                    label.setForeground(new Color(0x2e582e));
-                    label.setHorizontalAlignment(SwingConstants.LEFT);
-
-                    panel.add(label, BorderLayout.CENTER);
-
-                    panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, table.getGridColor()));
-                }
-                return panel;
-            }
-        });
-
-        // Status ------------------------------------------------
-
-        TableColumn statusCol = table.getColumnModel().getColumn(6);
-        statusCol.setCellRenderer(new DefaultTableCellRenderer()
-        {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
-                JLabel label = (JLabel) super.getTableCellRendererComponent(
-                        table, value, isSelected, hasFocus, row, column);
-
-                // Set text color based on status
-                if (value != null) {
-                    String status = value.toString();
-                    if (status.equalsIgnoreCase("Admitted")) {
-                        label.setForeground(new Color(0, 128, 0)); // green
-                    } else if (status.equalsIgnoreCase("Discharged")) {
-                        label.setForeground(Color.RED);
-                    } else {
-                        label.setForeground(Color.BLACK);
-                    }
-                }
-                return label;
-            }
-        });
-
-        // Column Width ------------------------------------------
-
-        table.getColumnModel().getColumn(0).setPreferredWidth(104); // Checkbox
-        table.getColumnModel().getColumn(1).setPreferredWidth(120); // ID
-        table.getColumnModel().getColumn(2).setPreferredWidth(250); // Name
-        table.getColumnModel().getColumn(3).setPreferredWidth(100); // Sex
-        table.getColumnModel().getColumn(4).setPreferredWidth(160); // Birthdate
-        table.getColumnModel().getColumn(5).setPreferredWidth(160); // Contact
-        table.getColumnModel().getColumn(6).setPreferredWidth(120); // Status
-        table.getColumnModel().getColumn(7).setPreferredWidth(210); // Physician
+//        JTable table = createTable(data, attributes, 2,    0,    6, colWidths);
 
         // Scroll Pane -------------------------------------------
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(0,0,1226,750);
+//            scrollPane = new JScrollPane();
+//        scrollPane.setBounds(0, 0, 1226, 750);
+//            listBGPanel.add(scrollPane);
 
-        // Select Button -----------------------------------------
+        scrollPane = new JScrollPane();
+//        scrollPane.setBounds(0, 0, 1226, 750);
+//        scrollPane.setBorder(null);
+//        scrollPane.setOpaque(false);
+//        scrollPane.getViewport().setOpaque(false);
 
-        JButton selectAllBtn = new JButton("Select All");
-        selectAllBtn.setBounds(10, 760, 120, 30);
-        selectAllBtn.addActionListener(e -> {
-            for (int i = 0; i < table.getRowCount(); i++) {
-                table.setValueAt(true, i, 0); // check all checkboxes
-            }
-        });
-
-        // Deselect Button ---------------------------------------
-
-        JButton deselectAllBtn = new JButton("Deselect All");
-        deselectAllBtn.setBounds(140, 760, 120, 30);
-        deselectAllBtn.addActionListener(e -> {
-            for (int i = 0; i < table.getRowCount(); i++) {
-                table.setValueAt(false, i, 0); // uncheck all checkboxes
-            }
-        });
 
         // Frames ------------------------------------------------
 
@@ -331,7 +205,6 @@ public class ASGui extends JFrame{
         wholeScreen.setLayout(null);
         wholeScreen.setBounds(0,0, screenWidth, screenHeight);
         wholeScreen.setBackground(new Color(0x749ee2));
-        // wholeScreen.setOpaque(true);
 
         mainPanel = new JLayeredPane();
         mainPanel.setLayout(null);
@@ -369,25 +242,6 @@ public class ASGui extends JFrame{
         listAttributesPanel.setBackground(new Color(0xd5e3d5));
         listAttributesPanel.setOpaque(true);
 
-        // int y = 50;
-
-        // for(int i = 0; i < 11; i++)
-        // {
-        //     listPanel[i] = new JPanel();
-
-        //     listPanel[i].setLayout(null);
-        //     listPanel[i].setBounds(0,y,1226,68);
-        //     listPanel[i].setOpaque(true);
-
-        //     if (i % 2 == 0)
-        //         listPanel[i].setBackground(Color.WHITE);
-        //     else
-        //         listPanel[i].setBackground(new Color(0xd5e3d5));
-
-        //     listBGPanel.add(listPanel[i]);
-        //     y += 68;
-        // }
-
         // Labels ------------------------------------------------
 
         logoLabel = new JLabel();
@@ -408,14 +262,14 @@ public class ASGui extends JFrame{
         mainMenuLabel.setBackground(Color.BLUE);
 
         transactionsLabel = new JLabel();
-        transactionsLabel.setBounds(50,490,240,50);
+        transactionsLabel.setBounds(50,438,240,50);
         transactionsLabel.setText("Transactions");
         transactionsLabel.setFont(MontserratBold.deriveFont(Font.BOLD,20f));
         transactionsLabel.setForeground(new Color(0x2e582e));
         transactionsLabel.setBackground(Color.BLUE);
 
         recordsLabel = new JLabel();
-        recordsLabel.setBounds(50,812,240,50);
+        recordsLabel.setBounds(50,760,240,50);
         recordsLabel.setText("Records");
         recordsLabel.setFont(MontserratBold.deriveFont(Font.BOLD,20f));
         recordsLabel.setForeground(new Color(0x2e582e));
@@ -501,25 +355,29 @@ public class ASGui extends JFrame{
 
         searchTextField = new JTextField();
         searchTextField.setBounds(50,0,210,30);
-        // searchTextField.setText("Search...");
         searchTextField.setText(placeholder);
         searchTextField.setFont(RobotoBold.deriveFont(Font.BOLD,14f));
         searchTextField.setBorder(null);
         searchTextField.setForeground(new Color(0x2e582e));
         searchTextField.setBackground(new Color(0xd5e3d5));
 
-        searchTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+        searchTextField.addFocusListener(new java.awt.event.FocusAdapter()
+        {
             @Override
-            public void focusGained(java.awt.event.FocusEvent e) {
-                if (searchTextField.getText().equals(placeholder)) {
+            public void focusGained(java.awt.event.FocusEvent e)
+            {
+                if (searchTextField.getText().equals(placeholder))
+                {
                     searchTextField.setText("");
                     searchTextField.setForeground(new Color(0x2e582e)); // normal text color
                 }
             }
 
             @Override
-            public void focusLost(java.awt.event.FocusEvent e) {
-                if (searchTextField.getText().isEmpty()) {
+            public void focusLost(java.awt.event.FocusEvent e)
+            {
+                if (searchTextField.getText().isEmpty())
+                {
                     searchTextField.setText(placeholder);
                     searchTextField.setForeground(Color.GRAY);
                 }
@@ -528,21 +386,8 @@ public class ASGui extends JFrame{
 
         // Buttons -----------------------------------------------
 
-        dashboardButton = new JButton();
-        dashboardButton.setBounds(30,126,240,40);
-        dashboardButton.setIcon(personIcon);
-        dashboardButton.setText("Dashboard");
-        dashboardButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
-        dashboardButton.setHorizontalAlignment(JLabel.LEFT);
-        dashboardButton.setIconTextGap(10);
-        dashboardButton.setForeground(new Color(0x2e582e));
-        dashboardButton.setBackground(new Color(0xd5e3d5));
-        dashboardButton.setBorder(BorderFactory.createEtchedBorder());
-        // dashboardButton.setBorder(BorderFactory.createLineBorder(new Color(0x9cb39c),2));
-        dashboardButton.setFocusable(false);
-
         patientButton = new JButton();
-        patientButton.setBounds(30,178,240,40);
+        patientButton.setBounds(30,126,240,40);
         patientButton.setIcon(personIcon);
         patientButton.setText("Patient");
         patientButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
@@ -554,7 +399,7 @@ public class ASGui extends JFrame{
         patientButton.setFocusable(false);
 
         physicianButton = new JButton();
-        physicianButton.setBounds(30,230,240,40);
+        physicianButton.setBounds(30,178,240,40);
         physicianButton.setIcon(personIcon);
         physicianButton.setText("Physician");
         physicianButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
@@ -566,7 +411,7 @@ public class ASGui extends JFrame{
         physicianButton.setFocusable(false);
 
         nurseButton = new JButton();
-        nurseButton.setBounds(30,282,240,40);
+        nurseButton.setBounds(30,230,240,40);
         nurseButton.setIcon(personIcon);
         nurseButton.setText("Nurse");
         nurseButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
@@ -578,7 +423,7 @@ public class ASGui extends JFrame{
         nurseButton.setFocusable(false);
 
         wardButton = new JButton();
-        wardButton.setBounds(30,334,240,40);
+        wardButton.setBounds(30,282,240,40);
         wardButton.setIcon(personIcon);
         wardButton.setText("Ward");
         wardButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
@@ -590,7 +435,7 @@ public class ASGui extends JFrame{
         wardButton.setFocusable(false);
 
         medicineButton = new JButton();
-        medicineButton.setBounds(30,386,240,40);
+        medicineButton.setBounds(30,334,240,40);
         medicineButton.setIcon(personIcon);
         medicineButton.setText("Medicine");
         medicineButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
@@ -602,7 +447,7 @@ public class ASGui extends JFrame{
         medicineButton.setFocusable(false);
 
         ailmentButton = new JButton();
-        ailmentButton.setBounds(30,438,240,40);
+        ailmentButton.setBounds(30,386,240,40);
         ailmentButton.setIcon(personIcon);
         ailmentButton.setText("Ailment");
         ailmentButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
@@ -614,7 +459,7 @@ public class ASGui extends JFrame{
         ailmentButton.setFocusable(false);
 
         admissionButton = new JButton();
-        admissionButton.setBounds(30,552,240,40);
+        admissionButton.setBounds(30,500,240,40);
         admissionButton.setIcon(personIcon);
         admissionButton.setText("Admission");
         admissionButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
@@ -626,7 +471,7 @@ public class ASGui extends JFrame{
         admissionButton.setFocusable(false);
 
         dischargeButton = new JButton();
-        dischargeButton.setBounds(30,604,240,40);
+        dischargeButton.setBounds(30,552,240,40);
         dischargeButton.setIcon(personIcon);
         dischargeButton.setText("Discharge");
         dischargeButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
@@ -637,20 +482,20 @@ public class ASGui extends JFrame{
         dischargeButton.setBorder(BorderFactory.createEtchedBorder());
         dischargeButton.setFocusable(false);
 
-        pAssignmentButton = new JButton();
-        pAssignmentButton.setBounds(30,656,240,40);
-        pAssignmentButton.setIcon(personIcon);
-        pAssignmentButton.setText("Physician Assignment");
-        pAssignmentButton.setFont(RobotoBold.deriveFont(Font.BOLD,16f));
-        pAssignmentButton.setHorizontalAlignment(JLabel.LEFT);
-        pAssignmentButton.setIconTextGap(10);
-        pAssignmentButton.setForeground(new Color(0x2e582e));
-        pAssignmentButton.setBackground(new Color(0xd5e3d5));
-        pAssignmentButton.setBorder(BorderFactory.createEtchedBorder());
-        pAssignmentButton.setFocusable(false);
+        diagnosisButton = new JButton();
+        diagnosisButton.setBounds(30,604,240,40);
+        diagnosisButton.setIcon(personIcon);
+        diagnosisButton.setText("Diagnosis");
+        diagnosisButton.setFont(RobotoBold.deriveFont(Font.BOLD,16f));
+        diagnosisButton.setHorizontalAlignment(JLabel.LEFT);
+        diagnosisButton.setIconTextGap(10);
+        diagnosisButton.setForeground(new Color(0x2e582e));
+        diagnosisButton.setBackground(new Color(0xd5e3d5));
+        diagnosisButton.setBorder(BorderFactory.createEtchedBorder());
+        diagnosisButton.setFocusable(false);
 
         nAssignmentButton = new JButton();
-        nAssignmentButton.setBounds(30,708,240,40);
+        nAssignmentButton.setBounds(30,656,240,40);
         nAssignmentButton.setIcon(personIcon);
         nAssignmentButton.setText("Nurse Assignment");
         nAssignmentButton.setFont(RobotoBold.deriveFont(Font.BOLD,16f));
@@ -662,9 +507,9 @@ public class ASGui extends JFrame{
         nAssignmentButton.setFocusable(false);
 
         treatmentButton = new JButton();
-        treatmentButton.setBounds(30,760,240,40);
+        treatmentButton.setBounds(30,708,240,40);
         treatmentButton.setIcon(personIcon);
-        treatmentButton.setText("Treatment Diagnosis");
+        treatmentButton.setText("Treatment");
         treatmentButton.setFont(RobotoBold.deriveFont(Font.BOLD,16f));
         treatmentButton.setHorizontalAlignment(JLabel.LEFT);
         treatmentButton.setIconTextGap(10);
@@ -673,17 +518,29 @@ public class ASGui extends JFrame{
         treatmentButton.setBorder(BorderFactory.createEtchedBorder());
         treatmentButton.setFocusable(false);
 
-        recordsButton = new JButton();
-        recordsButton.setBounds(30,874,240,40);
-        recordsButton.setIcon(personIcon);
-        recordsButton.setText("Records");
-        recordsButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
-        recordsButton.setHorizontalAlignment(JLabel.LEFT);
-        recordsButton.setIconTextGap(10);
-        recordsButton.setForeground(new Color(0x2e582e));
-        recordsButton.setBackground(new Color(0xd5e3d5));
-        recordsButton.setBorder(BorderFactory.createEtchedBorder());
-        recordsButton.setFocusable(false);
+        pScheduleButton = new JButton();
+        pScheduleButton.setBounds(30,822,240,40);
+        pScheduleButton.setIcon(personIcon);
+        pScheduleButton.setText("Physician Schedule");
+        pScheduleButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
+        pScheduleButton.setHorizontalAlignment(JLabel.LEFT);
+        pScheduleButton.setIconTextGap(10);
+        pScheduleButton.setForeground(new Color(0x2e582e));
+        pScheduleButton.setBackground(new Color(0xd5e3d5));
+        pScheduleButton.setBorder(BorderFactory.createEtchedBorder());
+        pScheduleButton.setFocusable(false);
+
+        nShiftButton = new JButton();
+        nShiftButton.setBounds(30,874,240,40);
+        nShiftButton.setIcon(personIcon);
+        nShiftButton.setText("Nurse Shift");
+        nShiftButton.setFont(RobotoBold.deriveFont(Font.BOLD,20f));
+        nShiftButton.setHorizontalAlignment(JLabel.LEFT);
+        nShiftButton.setIconTextGap(10);
+        nShiftButton.setForeground(new Color(0x2e582e));
+        nShiftButton.setBackground(new Color(0xd5e3d5));
+        nShiftButton.setBorder(BorderFactory.createEtchedBorder());
+        nShiftButton.setFocusable(false);
 
         settingsButton = new JButton();
         settingsButton.setBounds(1086,22,20,20);
@@ -864,7 +721,6 @@ public class ASGui extends JFrame{
         wholeScreen.add(sidePanel);
         sidePanel.add(logoLabel);
         sidePanel.add(mainMenuLabel);
-        sidePanel.add(dashboardButton);
         sidePanel.add(patientButton);
         sidePanel.add(physicianButton);
         sidePanel.add(nurseButton);
@@ -874,11 +730,12 @@ public class ASGui extends JFrame{
         sidePanel.add(transactionsLabel);
         sidePanel.add(admissionButton);
         sidePanel.add(dischargeButton);
-        sidePanel.add(pAssignmentButton);
+        sidePanel.add(diagnosisButton);
         sidePanel.add(nAssignmentButton);
         sidePanel.add(treatmentButton);
         sidePanel.add(recordsLabel);
-        sidePanel.add(recordsButton);
+        sidePanel.add(pScheduleButton);
+        sidePanel.add(nShiftButton);
         wholeScreen.add(mainPanel);
         mainPanel.add(topPanel);
         topPanel.add(patientListLabel);
@@ -898,18 +755,15 @@ public class ASGui extends JFrame{
         sortByLabel.add(sortByTextLabel);
         sortByLabel.add(dropdownButton2);
         topPanel2.add(filterByButton);
-        mainPanel.add(listBGPanel);
-        mainPanel.setLayer(listBGPanel, 10);
-        listBGPanel.add(selectAllBtn);
-        listBGPanel.add(deselectAllBtn);
-        listBGPanel.add(scrollPane);
-        // listBGPanel.add(listAttributesPanel);
-        mainPanel.add(entriesLabel);
         mainPanel.add(listViewButton);
         mainPanel.add(tileViewButton);
         mainPanel.add(createButton);
         mainPanel.add(updateButton);
         mainPanel.add(deleteButton);
+        mainPanel.add(listBGPanel);
+        mainPanel.setLayer(listBGPanel, 10);
+//        listBGPanel.add(scrollPane);
+        mainPanel.add(entriesLabel);
         mainPanel.add(previousPageButton);
         mainPanel.add(firstPageButton);
         mainPanel.add(secondPageButton);
@@ -981,59 +835,185 @@ public class ASGui extends JFrame{
         admissionButton.addActionListener(listener);
         dischargeButton.addActionListener(listener);
         dischargeButton.addActionListener(listener);
-        pAssignmentButton.addActionListener(listener);
+        diagnosisButton.addActionListener(listener);
         nAssignmentButton.addActionListener(listener);
         treatmentButton.addActionListener(listener);
+        nShiftButton.addActionListener(listener);
+        pScheduleButton.addActionListener(listener);
     }
 
-//    public JTable createPatientTable(List<Patient> patients) {
-//
-//        String[] attributes = {
-//                " ", "ID", "Patient Name", "Sex", "Birthdate",
-//                "Contact Number", "Status", "Assigned Physician"
-//        };
-//
-//        // Convert to 2D array
-//        Object[][] data = new Object[patients.size()][8];
-//        ImageIcon profileIcon = getDefaultProfileIcon(); // however you load it
-//
-//        for(int i = 0; i < patients.size(); i++) {
-//            Patient p = patients.get(i);
-//
-//            data[i][0] = false;
-//            data[i][1] = p.getPatientID();
-//            data[i][2] = new Object[]{ profileIcon, p.getLastName() + ", " + p.getFirstName() };
-//            data[i][3] = p.getSex();
-//            data[i][4] = p.getBirthDate();
-//            data[i][5] = p.getContact();
-//            data[i][6] = p.getStatus();
-//            data[i][7] = p.getLastName(); // or whatever
-//        }
-//
-//         ---- Create JTable (all your styling stays EXACTLY the same) ----
-//        JTable table = new JTable(data, attributes) {
-//            @Override
-//            public Class<?> getColumnClass(int column) {
-//                if (column == 0) return Boolean.class;
-//                return String.class;
-//            }
-//        };
-//
-//        // ↓↓↓ ALL your renderers, widths, header setup, etc. ↓↓↓
-//        // You can keep them exactly the same, I will not rewrite them here
-//        // Just include the same code you already have inside this method
-//
-//        return table;
-//    }
-//
-//    public void displayTable(JTable table)
-//    {
-//        JScrollPane scroll = new JScrollPane(table);
-//        scroll.setBounds(...);  // whatever layout you use
-//        panel.add(scroll);
-//        panel.revalidate();
-//        panel.repaint();
-//    }
+    public JTable createTable(
+            Object[][] data,
+            String[] attributes,
+            int iconNameColumnIndex,   // column where value = {ImageIcon, "Name"}, use -1 if none
+            int checkboxColumnIndex,   // column containing boolean checkboxes, use -1 if none
+            int statusColumnIndex,     // column containing status text for coloring, use -1 if none
+            Map<Integer, Integer> columnWidths)
+    {
+        DefaultTableModel model = new DefaultTableModel(data, attributes)
+        {
+            @Override
+            public Class<?> getColumnClass(int column) {
+                if (column == checkboxColumnIndex) return Boolean.class;
+                return String.class;
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == checkboxColumnIndex;
+            }
+        };
+
+        JTable table = new JTable(model);
+
+        // --- Row height, font, color ---
+        table.setFont(RobotoRegular.deriveFont(Font.PLAIN, 14f));
+        table.setForeground(new Color(0x2e582e));
+        table.setRowHeight(68);
+
+        table.setShowVerticalLines(false);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setIntercellSpacing(new Dimension(0, 0));
+        table.getColumnModel().setColumnMargin(0);
+        table.setRowSelectionAllowed(false);
+        table.setColumnSelectionAllowed(false);
+        table.setCellSelectionEnabled(true);
+
+        // Header ------------------------------------------------
+
+        JTableHeader header = table.getTableHeader();
+        header.setPreferredSize(new Dimension(1226, 49));
+        header.setBorder(BorderFactory.createEmptyBorder());
+        header.setResizingAllowed(false);
+
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer()
+        {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+                label.setHorizontalAlignment(SwingConstants.LEFT);
+                label.setFont(RobotoBold.deriveFont(Font.BOLD, 14f));
+                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
+                return label;
+            }
+        };
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+        }
+
+        // Checkbox ----------------------------------------------
+
+        if (checkboxColumnIndex != -1)
+        {
+            TableColumn selectCol = table.getColumnModel().getColumn(checkboxColumnIndex);
+            selectCol.setCellRenderer(new DefaultTableCellRenderer()
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column)
+                {
+                    JCheckBox checkBox = new JCheckBox();
+                    if (value instanceof Boolean) checkBox.setSelected((Boolean) value);
+                    checkBox.setHorizontalAlignment(SwingConstants.CENTER);
+                    checkBox.setBackground(table.getBackground());
+
+                    JPanel panel = new JPanel(new BorderLayout());
+                    panel.add(checkBox, BorderLayout.CENTER);
+                    panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, table.getGridColor()));
+                    return panel;
+                }
+            });
+        }
+
+        /// Name -------------------------------------------------
+        if (iconNameColumnIndex != -1)
+        {
+            TableColumn nameCol = table.getColumnModel().getColumn(iconNameColumnIndex);
+            nameCol.setCellRenderer(new DefaultTableCellRenderer()
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column)
+                {
+                    JPanel panel = new JPanel(new BorderLayout());
+                    panel.setOpaque(true);
+                    panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+
+                    if (value instanceof Object[])
+                    {
+                        Object[] arr = (Object[]) value;
+                        ImageIcon profileIcon = (ImageIcon) arr[0];
+                        String name = (String) arr[1];
+
+                        JLabel label = new JLabel(name);
+                        label.setIcon(profileIcon);
+                        label.setIconTextGap(10);
+                        label.setFont(RobotoRegular.deriveFont(Font.PLAIN, 14f));
+                        label.setForeground(new Color(0x2e582e));
+                        label.setHorizontalAlignment(SwingConstants.LEFT);
+
+                        panel.add(label, BorderLayout.CENTER);
+                        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, table.getGridColor()));
+                    }
+                    return panel;
+                }
+            });
+        }
+
+        // Status ------------------------------------------------
+        if (statusColumnIndex != -1)
+        {
+            TableColumn statusCol = table.getColumnModel().getColumn(statusColumnIndex);
+            statusCol.setCellRenderer(new DefaultTableCellRenderer()
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column)
+                {
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                    if (value != null)
+                    {
+                        String status = value.toString();
+                        if (status.equalsIgnoreCase("Admitted")) {
+                            label.setForeground(new Color(0, 128, 0));
+                        } else if (status.equalsIgnoreCase("Discharged")) {
+                            label.setForeground(Color.RED);
+                        } else {
+                            label.setForeground(Color.BLACK);
+                        }
+                    }
+
+                    label.setFont(RobotoRegular.deriveFont(Font.PLAIN, 14f));
+                    label.setHorizontalAlignment(SwingConstants.LEFT);
+                    return label;
+                }
+            });
+        }
+        // Column Width ------------------------------------------
+
+        if (columnWidths != null)
+        {
+            columnWidths.forEach((index, width) -> table.getColumnModel().getColumn(index).setPreferredWidth(width));
+        }
+
+        scrollPane.setViewportView(table);
+        scrollPane.setBounds(0, 0, 1226, 750);
+        listBGPanel.removeAll();
+        listBGPanel.add(scrollPane);
+        listBGPanel.revalidate();
+        listBGPanel.repaint();
+
+        return table;
+    }
+
 
 
 
@@ -1077,9 +1057,9 @@ public class ASGui extends JFrame{
         return dischargeButton;
     }
 
-    public JButton getpAssignmentButton()
+    public JButton getDiagnosisButton()
     {
-        return pAssignmentButton;
+        return diagnosisButton;
     }
 
     public JButton getnAssignmentButton()
@@ -1091,4 +1071,31 @@ public class ASGui extends JFrame{
     {
         return treatmentButton;
     }
+
+    public JButton getnShiftButton()
+    {
+        return nShiftButton;
+    }
+
+    public JButton getpScheduleButton()
+    {
+        return pScheduleButton;
+    }
+
+    public ImageIcon getProfileIcon()
+    {
+        return profileIcon;
+    }
+
+    public JPanel getListBGPanel()
+    {
+        return listBGPanel;
+    }
+
+    public JScrollPane getScrollPane()
+    {
+        return scrollPane;
+    }
+
+
 }

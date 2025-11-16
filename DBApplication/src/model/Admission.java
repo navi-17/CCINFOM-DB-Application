@@ -15,7 +15,7 @@ public class Admission {
 
     public Admission(int id)
     {
-        patient_id = id;
+        admission_id = id;
     }
 
     public void setAdmissionID(int id)
