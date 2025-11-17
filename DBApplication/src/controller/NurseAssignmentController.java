@@ -25,6 +25,7 @@ public class NurseAssignmentController implements ActionListener{
     {
         if(e.getSource() == asgui.getnAssignmentButton())
         {
+            asgui.setTableLabel("Nurse Assignment Records");
             System.out.println("Nurse Assignment Button clicked!");
             List<NurseAssignment> nurseAssignments = nurseAssignmentManagement.viewNurseAssignments();
             Object[][] data = new Object[nurseAssignments.size()][6];

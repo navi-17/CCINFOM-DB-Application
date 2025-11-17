@@ -28,6 +28,7 @@ public class PhysicianController implements ActionListener{
     {
         if(e.getSource() == asgui.getPhysicianButton())
         {
+            asgui.setTableLabel("Physician Records");
             System.out.println("Physician Button clicked!");
             List<Physician> physicians = physicianManagement.viewPhysicianRecords();
             Object[][] data = new Object[physicians.size()][5];
@@ -56,6 +57,7 @@ public class PhysicianController implements ActionListener{
         }
         else if(e.getSource() == asgui.getpScheduleButton())
         {
+            asgui.setTableLabel("Physician Schedule Records");
             System.out.println("Physician Schedule Button clicked!");
             List<PhysicianSchedule> schedules = physicianScheduleManagement.viewPhysicianSchedule();
             Object[][] data = new Object[schedules.size()][6];

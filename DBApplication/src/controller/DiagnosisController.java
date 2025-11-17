@@ -27,6 +27,7 @@ public class DiagnosisController implements ActionListener{
     {
         if(e.getSource() == asgui.getDiagnosisButton())
         {
+            asgui.setTableLabel("Diagnosis Records");
             System.out.println("Diagnosis Button clicked!");
             List<Diagnosis> diagnoses = diagnosisManagement.viewPatientDiagnosis();
             Object[][] data = new Object[diagnoses.size()][7];

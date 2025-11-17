@@ -26,6 +26,7 @@ public class WardController implements ActionListener {
     {
         if(e.getSource() == asgui.getWardButton())
         {
+            asgui.setTableLabel("Ward Records");
             System.out.println("Ward Button clicked!");
             List<Ward> wards = wardManagement.viewWardRecords();
             Object[][] data = new Object[wards.size()][5];

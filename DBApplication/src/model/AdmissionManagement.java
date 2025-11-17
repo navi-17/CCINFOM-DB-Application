@@ -176,6 +176,8 @@ public class AdmissionManagement {
     }
 
 
+
+
     public static void main(String[] args)
     {
         AdmissionManagement am = new AdmissionManagement();

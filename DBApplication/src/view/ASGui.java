@@ -37,7 +37,7 @@ public class ASGui extends JFrame{
     private JLabel mainMenuLabel;
     private JLabel transactionsLabel;
     private JLabel recordsLabel;
-    private JLabel patientListLabel;
+    private JLabel tableLabel;
     private JLabel profileLabel;
     private JLabel profileNameLabel;
     private JLabel profileJobLabel;
@@ -275,12 +275,12 @@ public class ASGui extends JFrame{
         recordsLabel.setForeground(new Color(0x2e582e));
         recordsLabel.setBackground(Color.BLUE);
 
-        patientListLabel = new JLabel();
-        patientListLabel.setBounds(60,0,240,64);
-        patientListLabel.setText("Patient List");
-        patientListLabel.setFont(MontserratBold.deriveFont(Font.BOLD,28f));
-        patientListLabel.setForeground(Color.WHITE);
-        patientListLabel.setBackground(Color.BLUE);
+        tableLabel = new JLabel();
+        tableLabel.setBounds(60,0,240,64);
+        tableLabel.setText(" ");
+        tableLabel.setFont(MontserratBold.deriveFont(Font.BOLD,28f));
+        tableLabel.setForeground(Color.WHITE);
+        tableLabel.setBackground(Color.BLUE);
 
         profileLabel = new JLabel();
         profileLabel.setIcon(profileIcon);
@@ -738,7 +738,7 @@ public class ASGui extends JFrame{
         sidePanel.add(nShiftButton);
         wholeScreen.add(mainPanel);
         mainPanel.add(topPanel);
-        topPanel.add(patientListLabel);
+        topPanel.add(tableLabel);
         topPanel.add(settingsButton);
         topPanel.add(notificationButton);
         topPanel.add(profileLabel);
@@ -1095,6 +1095,16 @@ public class ASGui extends JFrame{
     public JScrollPane getScrollPane()
     {
         return scrollPane;
+    }
+
+    public JLabel getTableLabel()
+    {
+        return tableLabel;
+    }
+
+    public void setTableLabel(String tableName)
+    {
+        tableLabel.setText(tableName);
     }
 
 

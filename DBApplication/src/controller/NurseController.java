@@ -25,6 +25,7 @@ public class NurseController implements ActionListener{
     {
         if(e.getSource() == asgui.getNurseButton())
         {
+            asgui.setTableLabel("Nurse Records");
             System.out.println("Nurse Button clicked!");
             List<Nurse> nurses = nurseManagement.viewNurseRecords();
             Object[][] data = new Object[nurses.size()][4];
@@ -51,6 +52,7 @@ public class NurseController implements ActionListener{
         }
         else if(e.getSource() == asgui.getnShiftButton())
         {
+            asgui.setTableLabel("Nurse Shift Records");
             System.out.println("NurseShift Button clicked!");
             List<NurseShift> nurseShifts = nurseShiftManagement.viewNurseShifts();
             Object[][] data = new Object[nurseShifts.size()][6];

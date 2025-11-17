@@ -21,7 +21,7 @@ public class AddPatientDialog extends JDialog {
         patientMgmt = new PatientManagement();
 
         // --- DIALOG BASE LAYOUT ---
-        setSize(600, 440);
+        setSize(700, 440);
         setLocationRelativeTo(parent);
         setResizable(false);
         setLayout(new BorderLayout());
@@ -151,8 +151,8 @@ public class AddPatientDialog extends JDialog {
         String ln = lastNameField.getText().trim();
         String dob = dobField.getText().trim();
         String contact = contactField.getText().trim();
-        String sex = contactField.getText().trim();
-        String status = contactField.getText().trim();
+        String sex = genderBox.getSelectedItem().toString();
+        String status = statusField.getText().trim();
 
         if (fn.isEmpty() || ln.isEmpty() || dob.isEmpty() || contact.isEmpty() || sex.isEmpty() || status.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill out all required fields.", "Incomplete", JOptionPane.WARNING_MESSAGE);

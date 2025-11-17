@@ -26,6 +26,7 @@ public class IllnessController implements ActionListener {
     {
         if(e.getSource() == asgui.getAilmentButton())
         {
+            asgui.setTableLabel("Illness Records");
             System.out.println("Ailment Button clicked!");
             List<Illness> illnesses = illnessManagement.viewIllnessRecords();
             Object[][] data = new Object[illnesses.size()][5];
