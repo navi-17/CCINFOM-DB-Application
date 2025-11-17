@@ -91,8 +91,76 @@ public class ReportManagement {
         return totalPatients;
     }
 
-//    public int getIllnessOccurenceReport (){
-//
-//        return;
-//    }
+    public int getIllnessOccurenceReport (String type, String illness, String dateOrMonth, Integer year){
+        int totalPatients = 0;
+
+        try{
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connection to database successful!");
+            String sql = "";
+
+
+            if(type.equalsIgnoreCase("day"))
+            {
+                sql = "SELECT COUNT(DISTINCT p.patient_id) AS Total_Patients " +
+                        "FROM patient p " +
+                        "JOIN diagnosis d ON p.patient_id = d.patient_id " +
+                        "JOIN treatment t ON d.diagnosis_id = t.diagnosis_id " +
+                        "WHERE d.illness = ? " +
+                        "AND t.treatment_date = ?";
+
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, illness);
+                pstmt.setString(2, dateOrMonth);
+
+
+            }
+            else if(type.equalsIgnoreCase("month"))
+            {
+                sql = "SELECT COUNT(DISTINCT p.patient_id) AS Total_Patients " +
+                        "FROM patient p " +
+                        "JOIN diagnosis d ON p.patient_id = d.patient_id " +
+                        "JOIN treatment t ON d.diagnosis_is = t.diagnosis_id " +
+                        "WHERE d.illness = ? " +
+                        "AND MONTH(t.treatment_date) = ? " +
+                        "AND YEAR(t.treatment_date) = ? ";
+
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, illness);
+                pstmt.setInt(2, Integer.parseInt(dateOrMonth));
+                pstmt.setInt(3, year);
+            }
+            else
+            {
+                sql = "SELECT COUNT(DISTINCT p.patient_id) AS Total_Patients " +
+                        "FROM patient p " +
+                        "JOIN diagnosis d ON p.patient_id = d.patient_id " +
+                        "JOIN treatment t ON d.diagnosis_is = t.diagnosis_id " +
+                        "WHERE d.illness = ? " +
+                        "AND YEAR(t.treatment_date) = ?";
+
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, illness);
+                pstmt.setInt(2, year);
+            }
+
+            ResultSet rs = pstmt.executeQuery();// used for queries that returns result
+
+            if(rs.next())
+            {
+                totalPatients = rs.getInt("Total_Patients");
+                System.out.println(totalPatients);
+
+            }
+
+            pstmt.close();
+            rs.close();
+            conn.close();
+
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return totalPatients;
+    }
 }
