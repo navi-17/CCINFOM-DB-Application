@@ -1,9 +1,8 @@
 package model;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import model.MakePDF;
+
+import java.sql.*;
 
 public class ReportManagement {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/DB";
@@ -12,9 +11,9 @@ public class ReportManagement {
     private Connection conn;
     PreparedStatement pstmt;
 
-    public int getPhysiciansWorkloadReport(String type, int physicianID, String dateOrMonth, Integer year)
+    public void getPhysiciansWorkloadReport(String type, int physicianID, String dateOrMonth, Integer year)
     {
-        int totalPatients = 0;
+        //int totalPatients = 0;
 
         try{
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
@@ -25,9 +24,7 @@ public class ReportManagement {
             if(type.equalsIgnoreCase("day"))
             {
                 sql = "SELECT COUNT(DISTINCT d.patient_id) AS Total_Patients " +
-                        "FROM treatment t " +
-                            "LEFT JOIN diagnosis d ON t.diagnosis_id = d.diagnosis_id "+
-                            "LEFT JOIN physician_schedule ps ON d.physicianSchedule_id = ps.physicianSchedule_id " +
+                        "FROM physician_workload_view " +
                         "WHERE t.treatment_date = ? " +
                             "AND ((t.performed_by = 'Diagnosing Physician' AND ps.physician_id = ?) " +
                             "OR (t.performed_by = 'Assigned Physician' AND t.assignedPhysician_id = ?))";
@@ -41,9 +38,7 @@ public class ReportManagement {
             else if(type.equalsIgnoreCase("month"))
             {
                 sql = "SELECT COUNT(DISTINCT d.patient_id) AS Total_Patients " +
-                        "FROM treatment t " +
-                            "LEFT JOIN diagnosis d ON t.diagnosis_id = d.diagnosis_id "+
-                            "LEFT JOIN physician_schedule ps ON d.physicianSchedule_id = ps.physicianSchedule_id " +
+                        "FROM physician_workload_view " +
                         "WHERE MONTH(t.treatment_date) = ? " +
                             "AND YEAR(t.treatment_date) = ? " +
                             "AND ((t.performed_by = 'Diagnosing Physician' AND ps.physician_id = ?) " +
@@ -58,9 +53,7 @@ public class ReportManagement {
             else
             {
                 sql = "SELECT COUNT(DISTINCT d.patient_id) AS Total_Patients " +
-                        "FROM treatment t " +
-                            "LEFT JOIN diagnosis d ON t.diagnosis_id = d.diagnosis_id "+
-                            "LEFT JOIN physician_schedule ps ON d.physicianSchedule_id = ps.physicianSchedule_id " +
+                        "FROM physician_workload_view " +
                         "WHERE YEAR(t.treatment_date) = ? " +
                         "AND ((t.performed_by = 'Diagnosing Physician' AND ps.physician_id = ?) " +
                             "OR (t.performed_by = 'Assigned Physician' AND t.assignedPhysician_id = ?))";
@@ -72,13 +65,14 @@ public class ReportManagement {
             }
 
             ResultSet rs = pstmt.executeQuery();// used for queries that returns result
+            MakePDF.exportToPDF(rs, "Physician Workload Report");
 
-            if(rs.next())
-            {
-                totalPatients = rs.getInt("Total_Patients");
-                System.out.println(totalPatients);
-
-            }
+//            if(rs.next())
+//            {
+//                totalPatients = rs.getInt("Total_Patients");
+//                System.out.println(totalPatients);
+//
+//            }
 
             pstmt.close();
             rs.close();
@@ -88,11 +82,11 @@ public class ReportManagement {
             System.out.println(e.getMessage());
         }
 
-        return totalPatients;
+        //return totalPatients;
     }
 
-    public int getIllnessOccurenceReport (String type, String illness, String dateOrMonth, Integer year){
-        int totalPatients = 0;
+    public void getIllnessOccurenceReport (String type, String illness, String dateOrMonth, Integer year){
+        //int totalPatients = 0;
 
         try{
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
@@ -103,9 +97,7 @@ public class ReportManagement {
             if(type.equalsIgnoreCase("day"))
             {
                 sql = "SELECT COUNT(DISTINCT p.patient_id) AS Total_Patients " +
-                        "FROM patient p " +
-                        "JOIN diagnosis d ON p.patient_id = d.patient_id " +
-                        "JOIN treatment t ON d.diagnosis_id = t.diagnosis_id " +
+                        "FROM illness_occurrence_view " +
                         "WHERE d.illness = ? " +
                         "AND t.treatment_date = ?";
 
@@ -118,9 +110,7 @@ public class ReportManagement {
             else if(type.equalsIgnoreCase("month"))
             {
                 sql = "SELECT COUNT(DISTINCT p.patient_id) AS Total_Patients " +
-                        "FROM patient p " +
-                        "JOIN diagnosis d ON p.patient_id = d.patient_id " +
-                        "JOIN treatment t ON d.diagnosis_is = t.diagnosis_id " +
+                        "FROM illness_occurrence_view " +
                         "WHERE d.illness = ? " +
                         "AND MONTH(t.treatment_date) = ? " +
                         "AND YEAR(t.treatment_date) = ? ";
@@ -133,9 +123,7 @@ public class ReportManagement {
             else
             {
                 sql = "SELECT COUNT(DISTINCT p.patient_id) AS Total_Patients " +
-                        "FROM patient p " +
-                        "JOIN diagnosis d ON p.patient_id = d.patient_id " +
-                        "JOIN treatment t ON d.diagnosis_is = t.diagnosis_id " +
+                        "FROM illness_occurence_view " +
                         "WHERE d.illness = ? " +
                         "AND YEAR(t.treatment_date) = ?";
 
@@ -146,12 +134,12 @@ public class ReportManagement {
 
             ResultSet rs = pstmt.executeQuery();// used for queries that returns result
 
-            if(rs.next())
-            {
-                totalPatients = rs.getInt("Total_Patients");
-                System.out.println(totalPatients);
-
-            }
+//            if(rs.next())
+//            {
+//                totalPatients = rs.getInt("Total_Patients");
+//                System.out.println(totalPatients);
+//
+//            }
 
             pstmt.close();
             rs.close();
@@ -161,12 +149,12 @@ public class ReportManagement {
             System.out.println(e.getMessage());
         }
 
-        return totalPatients;
+        //return totalPatients;
     }
 
-    public int getTreatmentStatistics(String type, int treatmentID, String dateOrMonth, Integer year)
+    public void getTreatmentStatistics(String type, int treatmentID, String dateOrMonth, Integer year)
     {
-        int totalPatients = 0;
+       // int totalPatients = 0;
 
         try {
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
@@ -177,7 +165,7 @@ public class ReportManagement {
             if (type.equalsIgnoreCase("day"))
             {
                 sql = "SELECT COUNT(DISTINCT d.patient_id) AS Total_Patients " +
-                        "FROM treatment t " +
+                        "FROM treatment_stats_view " +
                         "LEFT JOIN diagnosis d ON t.diagnosis_id = d.diagnosis_id" +
                         "WHERE t.treatment_id = ? " +
                         "AND t.treatment_date = ?";
@@ -190,8 +178,7 @@ public class ReportManagement {
             else if (type.equalsIgnoreCase("month"))
             {
                 sql = "SELECT COUNT(DISTINCT d.patient_id) AS Total_Patients " +
-                        "FROM treatment t " +
-                        "LEFT JOIN diagnosis d ON t.diagnosis_id = d.diagnosis_id " +
+                        "FROM treatment_stats_view " +
                         "WHERE t.treatment_id = ? " +
                         "AND MONTH(t.treatment_date) = ? " +
                         "AND YEAR(t.treatment_date) = ?";
@@ -205,8 +192,7 @@ public class ReportManagement {
             else
             {
                 sql = "SELECT COUNT(DISTINCT d.patient_id) AS Total_Patients " +
-                        "FROM treatment t " +
-                        "LEFT JOIN diagnosis d ON t.diagnosis_id = d.diagnosis_id " +
+                        "FROM treatment_stats_view " +
                         "WHERE t.treatment_id = ? " +
                         "AND YEAR(t.treatment_date) = ?";
 
@@ -217,11 +203,12 @@ public class ReportManagement {
 
             ResultSet rs = pstmt.executeQuery();
 
-            if (rs.next())
-            {
-                totalPatients = rs.getInt("Total_Patients");
-                System.out.println(totalPatients);
-            }
+
+//            if (rs.next())
+//            {
+//                totalPatients = rs.getInt("Total_Patients");
+//                System.out.println(totalPatients);
+//            }
 
 
             rs.close();
@@ -232,6 +219,12 @@ public class ReportManagement {
             System.out.println(e.getMessage());
         }
 
-        return totalPatients;
+       // return totalPatients;
     }
+
+//    public static void main(String[] args) throws SQLException {
+//        ReportManagement rm = new ReportManagement();
+//
+//        rm.getIllnessOccurenceReport();
+//    }
 }
