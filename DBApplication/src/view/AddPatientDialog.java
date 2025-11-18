@@ -1,4 +1,3 @@
-
 package view;
 
 import model.Patient;
@@ -12,8 +11,8 @@ import java.awt.event.ActionListener;
 
 public class AddPatientDialog extends JDialog {
 
-    private JTextField firstNameField, lastNameField, dobField, contactField, statusField;
-    private JComboBox<String> genderBox;
+    private JTextField firstNameField, lastNameField, dobField, contactField;
+    private JComboBox<String> genderBox, statusBox;
     private PatientManagement patientMgmt;
 
     public AddPatientDialog(JFrame parent) {
@@ -21,7 +20,7 @@ public class AddPatientDialog extends JDialog {
         patientMgmt = new PatientManagement();
 
         // --- DIALOG BASE LAYOUT ---
-        setSize(600, 440);
+        setSize(700, 440);
         setLocationRelativeTo(parent);
         setResizable(false);
         setLayout(new BorderLayout());
@@ -101,10 +100,10 @@ public class AddPatientDialog extends JDialog {
         // Status
         gbc.gridy++;
         gbc.gridx = 0;
-        formPanel.add(new JLabel("Status"), gbc);
+        formPanel.add(new JLabel("Status:"), gbc);
         gbc.gridx = 1;
-        statusField = new JTextField(15);
-        formPanel.add(statusField, gbc);
+        statusBox = new JComboBox<>(new String[]{"Admitted", "Discharged" });
+        formPanel.add(statusBox, gbc);
 
         // Right panel (placeholder image)
 		JPanel imagePanel = new JPanel();
@@ -151,8 +150,9 @@ public class AddPatientDialog extends JDialog {
         String ln = lastNameField.getText().trim();
         String dob = dobField.getText().trim();
         String contact = contactField.getText().trim();
-        String sex = contactField.getText().trim();
-        String status = contactField.getText().trim();
+        String sex = genderBox.getSelectedItem().toString();
+        String status = statusBox.getSelectedItem().toString();
+
 
         if (fn.isEmpty() || ln.isEmpty() || dob.isEmpty() || contact.isEmpty() || sex.isEmpty() || status.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill out all required fields.", "Incomplete", JOptionPane.WARNING_MESSAGE);

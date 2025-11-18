@@ -153,9 +153,9 @@ public class PhysicianScheduleManagement {
 
     public static void main(String[] args)
     {
-        PhysicianSchedule ps = new PhysicianSchedule(2001, "Wednesday", "08:00", "20:00");
+        //PhysicianSchedule ps = new PhysicianSchedule(2001, "Wednesday", "08:00", "20:00");
         PhysicianScheduleManagement psm = new PhysicianScheduleManagement();
-        PhysicianSchedule updateps = new PhysicianSchedule(2001, "Thursday", "10:00", "20:00");
+        //PhysicianSchedule updateps = new PhysicianSchedule(2001, "Thursday", "10:00", "20:00");
 
 //        psm.createPhysicianSchedule(ps);
 //        updateps.setPhysicianScheduleID(4);
