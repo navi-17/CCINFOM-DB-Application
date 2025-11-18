@@ -27,6 +27,9 @@ public class IllnessController implements ActionListener {
     {
         if(e.getSource() == asgui.getAilmentButton())
         {
+            asgui.setButtonValue(5);
+            asgui.setCreateButtonText("Add Illness");
+            asgui.showOnlyTabs("Illnesses", "Illness Related Records");
             asgui.setTableLabel("Illness Records");
             System.out.println("Ailment Button clicked!");
             List<Illness> illnesses = illnessManagement.viewIllnessRecords();
@@ -52,8 +55,17 @@ public class IllnessController implements ActionListener {
                     4, 323 //Description
             ); //1226 total = 106 checkbox, 150 ID, 970 left
 
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JTable illnessTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
 			asgui.setActionListeners(this);
+            JScrollPane illnessScrollPane = new JScrollPane(illnessTable);
+
+            int tabIndex = asgui.getTabIndex("Illnesses");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, illnessScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Illnesses' not found!");
+            }
         }
 		else if(e.getSource() == asgui.getDeleteButton()) 
 		{

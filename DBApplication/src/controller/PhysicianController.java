@@ -30,6 +30,9 @@ public class PhysicianController implements ActionListener{
     {
         if(e.getSource() == asgui.getPhysicianButton())
         {
+            asgui.setButtonValue(1);
+            asgui.setCreateButtonText("Add Physician");
+            asgui.showOnlyTabs("Physician", "Physician Related Records");
             asgui.setTableLabel("Physician Records");
             System.out.println("Physician Button clicked!");
             List<Physician> physicians = physicianManagement.viewPhysicianRecords();
@@ -40,18 +43,37 @@ public class PhysicianController implements ActionListener{
 
                 data[i][0] = false;
                 data[i][1] = p.getPhysicianID();
-                data[i][2] = new Object[]{ asgui.getProfileIcon(), p.getLastName() + ", " + p.getFirstName()};
+                data[i][2] = new Object[]{asgui.getProfileIcon(), p.getLastName() + ", " + p.getFirstName()};
                 data[i][3] = p.getContact();
                 data[i][4] = p.getSpecialization();
             }
 
             String[] attributes = {" ", "Physician ID", "Physician name", "Contact number", "Specialization"};
 
-            Map<Integer, Integer> colWidths = Map.of(0, 106, 1, 150, 2, 323, 3, 323, 4, 323);
-            asgui.createTable(data, attributes, 2, 0, -1, colWidths);
+            Map<Integer, Integer> colWidths = Map.of(
+                    0, 106,  // checkbox
+                    1, 150,  // ID
+                    2, 323,  // Name
+                    3, 323,  //contact
+                    4, 323 //specialization
+            ); //1226 total = 106 checkbox, 150 ID, 970 left
+
+            JTable physicianTable = asgui.createTable(data, attributes, 2, 0, -1, colWidths);
+            JScrollPane physicianScrollPane = new JScrollPane(physicianTable);
+
+            int tabIndex = asgui.getTabIndex("Physician");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, physicianScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Physician' not found!");
+            }
         }
         else if(e.getSource() == asgui.getpScheduleButton())
         {
+            asgui.setButtonValue(11);
+            asgui.setCreateButtonText("Add Schedule");
+            asgui.showOnlyTabs("Physician Schedules");
             asgui.setTableLabel("Physician Schedule Records");
             System.out.println("Physician Schedule Button clicked!");
             List<PhysicianSchedule> schedules = physicianScheduleManagement.viewPhysicianSchedule();
@@ -70,8 +92,25 @@ public class PhysicianController implements ActionListener{
 
             String[] attributes = {" ", "PhysicianSchedule ID", "Physician ID", "Day", "Start time", "End time"};
 
-            Map<Integer, Integer> colWidths = Map.of(0, 106, 1, 150, 2, 242, 3, 242, 4, 242, 5, 242);
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            Map<Integer, Integer> colWidths = Map.of(
+                    0, 106,  // checkbox
+                    1, 150,  // ID
+                    2, 242,  // Name
+                    3, 242,
+                    4, 242,
+                    5, 242// Contact
+            ); //1226 total = 106 checkbox, 150 ID, 970 left
+
+            JTable physicianSchedulesTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JScrollPane physicianSchedulesScrollPane = new JScrollPane(physicianSchedulesTable);
+
+            int tabIndex = asgui.getTabIndex("Physician Schedules");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, physicianSchedulesScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Physician Schedules' not found!");
+            }
         }
 		else if(e.getSource() == asgui.getDeleteButton()) 
 		{

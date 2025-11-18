@@ -28,6 +28,9 @@ public class AdmissionController implements ActionListener{
     {
         if(e.getSource() == asgui.getAdmissionButton())
         {
+            asgui.setButtonValue(6);
+            asgui.setCreateButtonText("Add Admission");
+            asgui.showOnlyTabs("Admissions");
             asgui.setTableLabel("Admission Records");
             System.out.println("Admission Button clicked!");
             List<Admission> admissions = admissionManagement.viewPatientAdmission();
@@ -52,7 +55,16 @@ public class AdmissionController implements ActionListener{
                     4, 323 //Date
             ); //1226 total = 106 checkbox, 150 ID, 970 left
 
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JTable admissionTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JScrollPane admissionSrollPane = new JScrollPane(admissionTable);
+
+            int tabIndex = asgui.getTabIndex("Admissions");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, admissionSrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Admissions' not found!");
+            }
         }
 		else if(e.getSource() == asgui.getDeleteButton())
 		{

@@ -26,10 +26,11 @@ public class MedicineController implements ActionListener{
     {
         if(e.getSource() == asgui.getMedicineButton())
         {
+            asgui.setButtonValue(4);
+            asgui.setCreateButtonText("Add Medicine");
+            asgui.showOnlyTabs("Medicines", "Medicine Related Records");
             asgui.setTableLabel("Medicine Records");
-            System.out.println("Medicine Button clicked! Displaying records.");
-            
-            // MODEL Call: Fetch data
+            System.out.println("Medicine button clicked!");
             List<Medicine> medicines = medicineManagement.viewMedicineRecord();
             
             // Data preparation for JTable
@@ -45,8 +46,17 @@ public class MedicineController implements ActionListener{
             Map<Integer, Integer> colWidths = Map.of(0, 106, 1, 373, 2, 373, 3, 373);
             
             // VIEW Call: Create and display table
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JTable medicineTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
 			asgui.setActionListeners(this); // Re-set listeners if needed after table recreation
+            JScrollPane medicineScrollPane = new JScrollPane(medicineTable);
+
+            int tabIndex = asgui.getTabIndex("Medicines");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, medicineScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Medicines' not found!");
+            }
         }
 		else if(e.getSource() == asgui.getDeleteButton()) 
 		{

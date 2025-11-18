@@ -28,6 +28,9 @@ public class NurseController implements ActionListener{
     {
         if(e.getSource() == asgui.getNurseButton())
         {
+            asgui.setButtonValue(2);
+            asgui.setCreateButtonText("Add Nurse");
+            asgui.showOnlyTabs("Nurse", "Nurse Related Records");
             asgui.setTableLabel("Nurse Records");
             System.out.println("Nurse Button clicked!");
             List<Nurse> nurses = nurseManagement.viewNurseRecords();
@@ -44,11 +47,29 @@ public class NurseController implements ActionListener{
 
             String[] attributes = {" ", "Nurse ID", "Nurse name", "Contact number"};
 
-            Map<Integer, Integer> colWidths = Map.of(0, 106, 1, 373, 2, 373, 3, 373);
-            asgui.createTable(data, attributes, 2, 0, -1, colWidths);
+            Map<Integer, Integer> colWidths = Map.of(
+                    0, 106,  // checkbox
+                    1, 373,  // ID
+                    2, 373,  // Name
+                    3, 373  // Contact
+            ); //1226 total: (1226-106) / 3 attributes =
+
+            JTable nurseTable = asgui.createTable(data, attributes, 2, 0, -1, colWidths);
+            JScrollPane nurseScrollPane = new JScrollPane(nurseTable);
+
+            int tabIndex = asgui.getTabIndex("Nurse");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, nurseScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Physician' not found!");
+            }
         }
         else if(e.getSource() == asgui.getnShiftButton())
         {
+            asgui.setButtonValue(12);
+            asgui.setCreateButtonText("Add Nurse Shift");
+            asgui.showOnlyTabs("Nurse Shifts");
             asgui.setTableLabel("Nurse Shift Records");
             System.out.println("NurseShift Button clicked!");
             List<NurseShift> nurseShifts = nurseShiftManagement.viewNurseShifts();
@@ -67,8 +88,25 @@ public class NurseController implements ActionListener{
 
             String[] attributes = {" ", "NurseShift ID", "Nurse ID", "Day", "Start time", "End time"};
 
-            Map<Integer, Integer> colWidths = Map.of(0, 106, 1, 150, 2, 242, 3, 242, 4, 242, 5, 242);
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            Map<Integer, Integer> colWidths = Map.of(
+                    0, 106,  // checkbox
+                    1, 150,  // ID
+                    2, 242,
+                    3, 242,
+                    4, 242,
+                    5, 242
+            ); //1226 total: (1226-106) / 3 attributes =
+
+            JTable nurseShiftTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JScrollPane nurseShiftScrollPane = new JScrollPane(nurseShiftTable);
+
+            int tabIndex = asgui.getTabIndex("Nurse Shifts");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, nurseShiftScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Nurse Shifts' not found!");
+            }
         }
         else if(e.getSource() == asgui.getDeleteButton()) 
         {

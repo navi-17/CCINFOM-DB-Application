@@ -29,6 +29,9 @@ public class DiagnosisController implements ActionListener{
     {
         if(e.getSource() == asgui.getDiagnosisButton())
         {
+            asgui.setButtonValue(8);
+            asgui.setCreateButtonText("Add Diagnosis");
+            asgui.showOnlyTabs("Diagnosis");
             asgui.setTableLabel("Diagnosis Records");
             System.out.println("Diagnosis Button clicked!");
             List<Diagnosis> diagnoses = diagnosisManagement.viewPatientDiagnosis();
@@ -51,7 +54,16 @@ public class DiagnosisController implements ActionListener{
                     0, 106, 1, 150, 2, 194, 3, 194, 4, 194, 5, 194, 6, 194
             ); 
 
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JTable diagnosisTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JScrollPane diagnosisScrollPane = new JScrollPane(diagnosisTable);
+
+            int tabIndex = asgui.getTabIndex("Diagnosis");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, diagnosisScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Diagnosis' not found!");
+            }
         }
 		else if(e.getSource() == asgui.getDeleteButton()) 
 		{

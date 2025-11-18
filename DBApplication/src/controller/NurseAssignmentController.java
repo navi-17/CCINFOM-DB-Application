@@ -27,6 +27,9 @@ public class NurseAssignmentController implements ActionListener{
     {
         if(e.getSource() == asgui.getnAssignmentButton())
         {
+            asgui.setButtonValue(9);
+            asgui.setCreateButtonText("Add Assignment");
+            asgui.showOnlyTabs("Nurse Assignments");
             asgui.setTableLabel("Nurse Assignment Records");
             // ... (VIEW logic) ...
             List<NurseAssignment> nurseAssignments = nurseAssignmentManagement.viewNurseAssignments();
@@ -44,7 +47,16 @@ public class NurseAssignmentController implements ActionListener{
 
             String[] attributes = {" ", "Nurse Assignment ID", "Nurse Shift ID", "Patient ID", "Date Assigned", "Assigned Until"};
             Map<Integer, Integer> colWidths = Map.of(0, 106, 1, 150, 2, 242, 3, 242, 4, 242, 5, 242);
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JTable nurseAssignmentTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JScrollPane nurseAssignmentScrollPane = new JScrollPane(nurseAssignmentTable);
+
+            int tabIndex = asgui.getTabIndex("Nurse Assignments");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, nurseAssignmentScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Nurse Assignments' not found!");
+            }
         }
 		else if(e.getSource() == asgui.getDeleteButton()) 
 		{

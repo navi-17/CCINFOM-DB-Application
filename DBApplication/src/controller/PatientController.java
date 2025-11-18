@@ -4,6 +4,7 @@ import model.*;
 import view.ASGui;
 import view.UpdatePatientDialog; // Correct Import
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -25,14 +26,17 @@ public class PatientController implements ActionListener{
     {
         if(e.getSource() == asgui.getPatientButton())
         {
+            asgui.setButtonValue(0);
+            asgui.setCreateButtonText("Add Patient");
+            asgui.showOnlyTabs("Patients", "Patient Related Records");
             asgui.setTableLabel("Patient Records");
             System.out.println("Patient Button clicked!");
+            //---------Creating the table for viewing record
             List<Patient> patients = patientManagement.viewPatientRecords();
             Object[][] data = new Object[patients.size()][7];
             for(int i = 0; i < patients.size(); i++)
             {
                 Patient p = patients.get(i);
-
                 data[i][0] = false;
                 data[i][1] = p.getPatientID();
                 data[i][2] = new Object[]{ asgui.getProfileIcon(), p.getLastName() + ", " + p.getFirstName()};
@@ -48,7 +52,17 @@ public class PatientController implements ActionListener{
                     0, 106, 1, 150, 2, 260, 3, 120, 4, 220, 5, 220, 6, 150
             );
 
-            asgui.createTable(data, attributes, 2, 0, 6, colWidths);
+            JTable patientTable = asgui.createTable(data, attributes, 2, 0, 6, colWidths);
+            JScrollPane patientScrollPane = new JScrollPane(patientTable);
+
+            int tabIndex = asgui.getTabIndex("Patients");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, patientScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Patient' not found!");
+            }
+
         }
         else if(e.getSource() == asgui.getDeleteButton()) 
         {

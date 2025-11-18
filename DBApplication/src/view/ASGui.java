@@ -19,6 +19,7 @@ public class ASGui extends JFrame{
     private int mainWidth;
     private int sideWidth;
     private String placeholder = "Search...";
+    private int buttonValue;
 
     private JScrollPane scrollPane;
     private JTabbedPane tabbedPane;
@@ -96,6 +97,10 @@ public class ASGui extends JFrame{
     private ImageIcon dropdownIcon2 = new ImageIcon(getClass().getResource("/resources/dropdownIcon2.png"));
     private ImageIcon searchIcon = new ImageIcon(getClass().getResource("/resources/searchIcon.png"));
     private ImageIcon cancelIcon = new ImageIcon(getClass().getResource("/resources/cancelIcon.png"));
+
+    private List<Component> allTabContents;
+    private List<String> allTabTitles;
+
 
     private static Font RobotoRegular;
     private static Font RobotoBold;
@@ -177,17 +182,38 @@ public class ASGui extends JFrame{
         scrollPane = new JScrollPane();
 
         // JTabbedPane
+//        String[] tabs = {"Patients", "Illness", "Treatment", "Physician", "Nurse"};
+//
+//        JScrollPane[] placeholders = new JScrollPane[tabs.length];
+//
+//        for (int i = 0; i < placeholders.length; i++)
+//        {
+//            placeholders[i] = null; // optional, Java initializes to null by default
+//        }
+//
+//        tabbedPane = createTabbedPane(tabs, placeholders);
+//        tabbedPane.setBounds(-1, 1, 1230, 785); // Set size here
 
-        String[] tabs = {"Patients", "Illness", "Treatment", "Physician", "Nurse"};
-
+        String[] tabs = {"Patients", "Patient Related Records", "Illnesses", "Illness Related Records", "Wards", "Physician Schedules",
+                "Ward Related Records", "Nurse", "Nurse Related Records", "Physician", "Physician Related Records", "Nurse Shifts",
+                "Medicines", "Medicine Related Records", "Diagnosis", "Nurse Assignments", "Admissions", "Treatments", "Discharges"};
         JScrollPane[] placeholders = new JScrollPane[tabs.length];
-        for (int i = 0; i < placeholders.length; i++)
-        {
-            placeholders[i] = null; // optional, Java initializes to null by default
+        for (int i = 0; i < placeholders.length; i++) {
+            placeholders[i] = new JScrollPane(); // empty placeholder
+        }
+        tabbedPane = createTabbedPane(tabs, placeholders);
+        tabbedPane.setBounds(-1, 1, 1230, 785);
+        allTabContents = new ArrayList<>();
+        allTabTitles = new ArrayList<>();
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            allTabContents.add(tabbedPane.getComponentAt(i));
+            allTabTitles.add(tabbedPane.getTitleAt(i));
         }
 
-        tabbedPane = createTabbedPane(tabs, placeholders);
-        tabbedPane.setBounds(-1, 1, 1230, 785); // Set size here
+
+//        tabbedPane.removeAll(); //so that it wont show when you run it initally
+//        getScrollPane().add(tabbedPane);
+
 
 
         // Frames ------------------------------------------------
@@ -399,6 +425,7 @@ public class ASGui extends JFrame{
         });
 
         // Buttons -----------------------------------------------
+        buttonValue = 0;
 
         patientButton = new JButton();
         patientButton.setBounds(30,126,240,40);
@@ -576,6 +603,7 @@ public class ASGui extends JFrame{
         searchButton.setContentAreaFilled(false);
         // searchButton.setBorderPainted(false);
         searchButton.setFocusable(false);
+
 
         cancelButton = new JButton();
         cancelButton.setBounds(270,5,20,20);
@@ -809,8 +837,10 @@ public class ASGui extends JFrame{
         treatmentButton.addActionListener(listener);
         nShiftButton.addActionListener(listener);
         pScheduleButton.addActionListener(listener);
+        createButton.addActionListener(listener);
         deleteButton.addActionListener(listener);
         updateButton.addActionListener(listener);
+        searchButton.addActionListener(listener);
     }
 
     public List<Object> getSelectedRowIDs(JTable table) {
@@ -829,7 +859,10 @@ public class ASGui extends JFrame{
         return selectedIDs;
     }
 
-
+    public JButton getCreateButton()
+    {
+        return createButton;
+    }
 
     public JButton getDeleteButton()
     {
@@ -874,6 +907,9 @@ public class ASGui extends JFrame{
         }
         return null;
     }
+
+
+
 
 
     public JTable createTable(
@@ -1038,17 +1074,17 @@ public class ASGui extends JFrame{
             columnWidths.forEach((index, width) -> table.getColumnModel().getColumn(index).setPreferredWidth(width));
         }
 
-        scrollPane.setViewportView(table);
-        scrollPane.setBounds(0, 0, 1226, 750);
-
-        tabbedPane.setComponentAt(0, scrollPane);
-        tabbedPane.revalidate();
-        tabbedPane.repaint();
+//        scrollPane.setViewportView(table);
+//        scrollPane.setBounds(0, 0, 1226, 750);
+//
+////        tabbedPane.setComponentAt(0, scrollPane);
+//        tabbedPane.revalidate();
+//        tabbedPane.repaint();
 
         return table;
     }
 
-    public static JTabbedPane createTabbedPane(String[] tabNames, JScrollPane[] tabContents)
+    public JTabbedPane createTabbedPane(String[] tabNames, JScrollPane[] tabContents)
     {
         // Aesthetic of Tabbed Pane
         if (tabNames.length != tabContents.length)
@@ -1103,6 +1139,30 @@ public class ASGui extends JFrame{
         }
 
         return tabbedPane;
+    }
+
+    public void showOnlyTabs(String... visibleTabs) {
+        tabbedPane.removeAll();
+
+        for (String name : visibleTabs) {
+            int idx = allTabTitles.indexOf(name);
+            if (idx != -1) {
+                tabbedPane.addTab(name, allTabContents.get(idx));
+            }
+        }
+
+        tabbedPane.revalidate();
+        tabbedPane.repaint();
+    }
+
+
+    public int getTabIndex(String tabName) {
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            if (tabbedPane.getTitleAt(i).equals(tabName)) {
+                return i;
+            }
+        }
+        return -1; // not found
     }
 
     public JButton getPatientButton()
@@ -1190,4 +1250,34 @@ public class ASGui extends JFrame{
         tableLabel.setText(tableName);
     }
 
+    public JTabbedPane getTabbedPane()
+    {
+        return tabbedPane;
+    }
+
+
+    public JButton getSearchButton()
+    {
+        return searchButton;
+    }
+
+    public JTextField getSearchTextField()
+    {
+        return searchTextField;
+    }
+
+    public void setCreateButtonText(String createText)
+    {
+        createButton.setText(createText);
+    }
+
+    public int getButtonValue()
+    {
+        return buttonValue;
+    }
+
+    public void setButtonValue(int newValue)
+    {
+        buttonValue = newValue;
+    }
 }
