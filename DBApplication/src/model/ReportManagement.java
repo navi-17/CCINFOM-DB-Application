@@ -203,13 +203,11 @@ public class ReportManagement {
 
             ResultSet rs = pstmt.executeQuery();
 
-
 //            if (rs.next())
 //            {
 //                totalPatients = rs.getInt("Total_Patients");
 //                System.out.println(totalPatients);
 //            }
-
 
             rs.close();
             pstmt.close();
@@ -220,7 +218,7 @@ public class ReportManagement {
         }
 
        // return totalPatients;
-    }
+    }   
 
     public static void main(String[] args) throws SQLException {
         ReportManagement rm = new ReportManagement();

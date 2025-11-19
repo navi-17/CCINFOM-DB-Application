@@ -20,7 +20,7 @@ public class WardManagement {
             System.out.println("Connection to database successful!");
 
             //2. Prepare SQL Statement --> store in PreparedStatement (dont forget to put alias for column name so u can fetch the value)
-            String sql = "INSERT INTO ward (floor, ward_number, w_status) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO ward (floor, ward_no, w_status) VALUES (?, ?, ?)";
             pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, ward.getFloor());
@@ -87,7 +87,7 @@ public class WardManagement {
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connection to database successful!");
 
-            String sql = "UPDATE ward SET floor = ?, ward_number = ?, w_status = ? WHERE ward_id = ?";
+            String sql = "UPDATE ward SET floor = ?, ward_no = ?, w_status = ? WHERE ward_id = ?";
             pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, ward.getFloor()); // new floor

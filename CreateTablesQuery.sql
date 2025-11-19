@@ -48,7 +48,7 @@ CREATE TABLE physician_schedule(
 CREATE TABLE ward(
 	ward_id INT AUTO_INCREMENT PRIMARY KEY, 
     ward_number INT NOT NULL,
-    floor VARCHAR(20) not null,
+    floor VARCHAR(20) NOT NULL,
     w_status ENUM('Available', 'Occupied') NOT NULL
 );
 

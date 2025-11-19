@@ -60,6 +60,8 @@ public class PhysicianController implements ActionListener{
 
             JTable physicianTable = asgui.createTable(data, attributes, 2, 0, -1, colWidths);
             JScrollPane physicianScrollPane = new JScrollPane(physicianTable);
+            asgui.setPhysicianScrollPane(physicianScrollPane);
+            asgui.setCurrentPhysicianTable(physicianTable);
 
             int tabIndex = asgui.getTabIndex("Physician");
             if(tabIndex != -1) {
@@ -103,7 +105,8 @@ public class PhysicianController implements ActionListener{
 
             JTable physicianSchedulesTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
             JScrollPane physicianSchedulesScrollPane = new JScrollPane(physicianSchedulesTable);
-
+            asgui.setPhysicianSchedulesScrollPane(physicianSchedulesScrollPane);
+            asgui.setCurrentPhysicianSchedulesTable(physicianSchedulesTable);
             int tabIndex = asgui.getTabIndex("Physician Schedules");
             if(tabIndex != -1) {
                 asgui.getTabbedPane().setComponentAt(tabIndex, physicianSchedulesScrollPane);
@@ -116,20 +119,29 @@ public class PhysicianController implements ActionListener{
 		{
             String currentLabel = asgui.getTableLabel().getText();
             if (!currentLabel.equals("Physician Records") && !currentLabel.equals("Physician Schedule Records")) return;
-            
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
-			
+
+            JTable table;
+            if (currentLabel.equals("Physician Records")) {
+                table = asgui.getPhysicianTable();
+            } else {
+                table = asgui.getCurrentPhysicianSchedulesTable();
+            }
+
+            if (table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
 			String entityType = (currentLabel.equals("Physician Records")) ? "Physician" : "Physician Schedule";
-			
+
 			List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
             if (selectedIDs.isEmpty()) {
                 JOptionPane.showMessageDialog(asgui, "No rows selected for deletion.", "Warning", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-			int confirm = JOptionPane.showConfirmDialog(asgui, 
-				"Are you sure you want to delete the selected " + selectedIDs.size() + " " + entityType + " record(s)?", 
+			int confirm = JOptionPane.showConfirmDialog(asgui,
+				"Are you sure you want to delete the selected " + selectedIDs.size() + " " + entityType + " record(s)?",
 				"Confirm Deletion", JOptionPane.YES_NO_OPTION);
 
 			if (confirm == JOptionPane.YES_OPTION) {
@@ -137,14 +149,14 @@ public class PhysicianController implements ActionListener{
 				for (Object id : selectedIDs) {
 					int entityID = (int) id;
 					boolean success = false;
-					
+
 					try {
 						if (entityType.equals("Physician")) {
 							success = physicianManagement.deletePhysicianRecord(entityID);
 						} else if (entityType.equals("Physician Schedule")) {
 							success = physicianScheduleManagement.deletePhysicianSchedule(entityID);
 						}
-						
+
 						if (success) {
 							deletedCount++;
 						}
@@ -154,7 +166,7 @@ public class PhysicianController implements ActionListener{
 				}
 
 				JOptionPane.showMessageDialog(asgui, deletedCount + " " + entityType + " record(s) deleted successfully.", "Deletion Complete", JOptionPane.INFORMATION_MESSAGE);
-				
+
 				// Refresh the current table display
 				if (entityType.equals("Physician")) {
 					asgui.getPhysicianButton().doClick();
@@ -166,7 +178,14 @@ public class PhysicianController implements ActionListener{
 		else if(e.getSource() == asgui.getUpdateButton()) 
 		{
             String currentLabel = asgui.getTableLabel().getText();
-            JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
+
+            JTable table;
+            if (currentLabel.equals("Physician Records")) {
+                table = asgui.getPhysicianTable();
+            } else {
+                table = asgui.getCurrentPhysicianSchedulesTable();
+            }
+
             if (table == null) return;
             List<Object> selectedData = asgui.getSelectedRowData(table);
             if (selectedData == null) return;

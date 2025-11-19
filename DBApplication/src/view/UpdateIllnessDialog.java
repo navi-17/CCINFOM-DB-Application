@@ -21,7 +21,7 @@ public class UpdateIllnessDialog extends JDialog {
         this.originalIllness = illness;
 
         // DIALOG BASE LAYOUT
-        setSize(600, 400);
+        setSize(800, 400);
         setLocationRelativeTo(parent);
         setResizable(false);
         setLayout(new BorderLayout());

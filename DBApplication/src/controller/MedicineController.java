@@ -47,8 +47,10 @@ public class MedicineController implements ActionListener{
             
             // VIEW Call: Create and display table
             JTable medicineTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
-			asgui.setActionListeners(this); // Re-set listeners if needed after table recreation
             JScrollPane medicineScrollPane = new JScrollPane(medicineTable);
+
+            asgui.setMedicineTable(medicineTable);
+            asgui.setMedicineScrollPane(medicineScrollPane);
 
             int tabIndex = asgui.getTabIndex("Medicines");
             if(tabIndex != -1) {
@@ -62,8 +64,11 @@ public class MedicineController implements ActionListener{
 		{
 			if (!asgui.getTableLabel().getText().equals("Medicine Records")) return;
 			System.out.println("Delete Button clicked for Medicine!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getMedicineTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
 			if (selectedIDs.isEmpty()) {
@@ -97,8 +102,11 @@ public class MedicineController implements ActionListener{
             if (!asgui.getTableLabel().getText().equals("Medicine Records")) return;
 
 			System.out.println("Update Button clicked for Medicine!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getMedicineTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedData = asgui.getSelectedRowData(table);
 

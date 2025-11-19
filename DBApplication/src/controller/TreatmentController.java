@@ -7,6 +7,7 @@ import view.UpdateTreatmentDialog;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.sql.Date;
@@ -57,6 +58,8 @@ public class TreatmentController implements ActionListener{
 
             JTable treatmentTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
             JScrollPane treatmentScrollPane = new JScrollPane(treatmentTable);
+            asgui.setTreatmentTable(treatmentTable);
+            asgui.setTreatmentScrollPane(treatmentScrollPane);
 
             int tabIndex = asgui.getTabIndex("Treatments");
             if(tabIndex != -1) {
@@ -68,67 +71,130 @@ public class TreatmentController implements ActionListener{
         }
 		else if(e.getSource() == asgui.getDeleteButton()) 
 		{
-			if (!asgui.getTableLabel().getText().equals("Treatment Records")) return;
-			
-			// ... (Delete logic) ...
+            if (!"Treatment Records".equals(asgui.getTableLabel().getText())) return;
+
+            JTable table = asgui.getTreatmentTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            List<Object> selectedIDs = new ArrayList<>();
+            for(int i = 0; i < table.getRowCount(); i++) {
+                Boolean checked = (Boolean) table.getValueAt(i, 0);
+                if(Boolean.TRUE.equals(checked)) {
+                    selectedIDs.add(table.getValueAt(i, 1)); // patient ID
+                }
+            }
+
+            if(selectedIDs.isEmpty()) {
+                JOptionPane.showMessageDialog(asgui, "No rows selected for deletion.", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(asgui,
+                    "Are you sure you want to delete the selected " + selectedIDs.size() + " treatment record(s)?",
+                    "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+
+            if(confirm == JOptionPane.YES_OPTION) {
+                int deletedCount = 0;
+                for(Object id : selectedIDs) {
+                    try {
+                        if(treatmentManagement.deleteTreatmentRecord((int) id)) {
+                            deletedCount++;
+                        }
+                    } catch(Exception ex) {
+                        System.err.println("Error deleting tretment ID " + id + ": " + ex.getMessage());
+                    }
+                }
+                JOptionPane.showMessageDialog(asgui, deletedCount + " treatment record(s) deleted successfully.", "Deletion Complete", JOptionPane.INFORMATION_MESSAGE);
+                asgui.getPatientButton().doClick(); // refresh table
+            }
 		}
 		else if(e.getSource() == asgui.getUpdateButton()) 
 		{
-			if (!asgui.getTableLabel().getText().equals("Treatment Records")) return;
-            
-            //  IMPLEMENTED UPDATE LOGIC 
-			System.out.println("Update Button clicked for Treatment!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            if (!"Treatment Records".equals(asgui.getTableLabel().getText())) return;
 
-			List<Object> selectedData = asgui.getSelectedRowData(table);
+            JTable table = asgui.getTreatmentTable(); // get the stored reference
+            if (table == null) return;
 
-			if (selectedData != null) {
-				if (table.getModel().getColumnCount() != 10) {
-					JOptionPane.showMessageDialog(asgui, "Update function available only for Treatment Records view.", "Update Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				try {
-					// Extract data: [0:Chk] [1:T ID] [2:NA ID] [3:D ID] [4:M ID] [5:AP ID] [6:Perf By] [7:Date] [8:Proc] [9:Remarks]
-					int treatmentID = (int) selectedData.get(1);
-					int nurseAssignmentID = Integer.parseInt(selectedData.get(2).toString());
-					int diagnosisID = Integer.parseInt(selectedData.get(3).toString());
-					int medicineID = Integer.parseInt(selectedData.get(4).toString());
-					
-                    // Handle Optional Assigned Physician ID (AP ID)
-					Integer assignedPhysicianID = null;
-                    if (selectedData.get(5) != null && selectedData.get(5).toString().trim().length() > 0) {
-                        // Check if the column is a non-null integer.
-                        try {
-                            assignedPhysicianID = Integer.parseInt(selectedData.get(5).toString());
-                        } catch (NumberFormatException nfe) {
-                            // If it fails parsing (e.g., empty string or non-numeric), keep it null
-                            assignedPhysicianID = null;
-                        }
+            int checkedRow = -1;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                Boolean checked = (Boolean) table.getValueAt(i, 0);
+                if (Boolean.TRUE.equals(checked)) {
+                    if (checkedRow != -1) {
+                        JOptionPane.showMessageDialog(asgui, "Please check only one row to update.", "Multiple Selection", JOptionPane.WARNING_MESSAGE);
+                        return;
                     }
+                    checkedRow = i;
+                }
+            }
 
-                    String performedBy = (String) selectedData.get(6);
-                    Date treatmentDate = Date.valueOf(selectedData.get(7).toString());
-                    String procedure = (String) selectedData.get(8);
-                    String remarks = (String) selectedData.get(9);
-					
-					// Create Treatment object
-					Treatment selectedTreatment = new Treatment(nurseAssignmentID, diagnosisID, medicineID, treatmentDate, procedure, remarks, assignedPhysicianID, performedBy);
-					selectedTreatment.setTreatmentID(treatmentID);
-					
-					// Open the Update Dialog
-					UpdateTreatmentDialog updateDialog = new UpdateTreatmentDialog(asgui, selectedTreatment);
-					updateDialog.setVisible(true);
+            if (checkedRow == -1) {
+                JOptionPane.showMessageDialog(asgui, "Please check a row to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-					// Refresh the table
-					asgui.getTreatmentButton().doClick();
+            try {
+                // Extract data from the checked row
+                int treatmentID = (int) table.getValueAt(checkedRow, 1);
+                int nurseAssignmentID = Integer.parseInt(table.getValueAt(checkedRow, 2).toString());
+                int diagnosisID = Integer.parseInt(table.getValueAt(checkedRow, 3).toString());
+                int medicineID = Integer.parseInt(table.getValueAt(checkedRow, 4).toString());
 
-				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(asgui, "Error processing selected Treatment data.", "Data Error", JOptionPane.ERROR_MESSAGE);
-					ex.printStackTrace();
-				}
-			}
-		}
+                Integer assignedPhysicianID = null;
+                if (table.getValueAt(checkedRow, 5) != null && !table.getValueAt(checkedRow, 5).toString().trim().isEmpty()) {
+                    try {
+                        assignedPhysicianID = Integer.parseInt(table.getValueAt(checkedRow, 5).toString());
+                    } catch (NumberFormatException nfe) {
+                        assignedPhysicianID = null;
+                    }
+                }
+
+                String performedBy = (String) table.getValueAt(checkedRow, 6);
+
+                Object dateObj = table.getValueAt(checkedRow, 7);
+                java.sql.Date treatmentDate;
+
+                if (dateObj instanceof java.sql.Date) {
+                    treatmentDate = (java.sql.Date) dateObj;  // already correct type
+                } else if (dateObj instanceof java.util.Date) {
+                    treatmentDate = new java.sql.Date(((java.util.Date) dateObj).getTime());
+                } else if (dateObj instanceof String) {
+                    try {
+                        treatmentDate = java.sql.Date.valueOf(((String) dateObj).trim());
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(asgui,
+                                "Invalid treatment date. Use yyyy-MM-dd format.",
+                                "Invalid Date", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(asgui,
+                            "Unknown date format in table.",
+                            "Invalid Date", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                String procedure = (String) table.getValueAt(checkedRow, 8);
+                String remarks = (String) table.getValueAt(checkedRow, 9);
+
+                Treatment selectedTreatment = new Treatment(nurseAssignmentID, diagnosisID, medicineID, treatmentDate, procedure, remarks, assignedPhysicianID, performedBy);
+                selectedTreatment.setTreatmentID(treatmentID);
+
+                UpdateTreatmentDialog updateDialog = new UpdateTreatmentDialog(asgui, selectedTreatment);
+                updateDialog.setVisible(true);
+
+                // Refresh the table
+                asgui.getTreatmentButton().doClick();
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(asgui, "Error processing selected Treatment data.", "Data Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+
+
+
+        }
     }
 }

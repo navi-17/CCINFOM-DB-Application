@@ -56,6 +56,8 @@ public class NurseController implements ActionListener{
 
             JTable nurseTable = asgui.createTable(data, attributes, 2, 0, -1, colWidths);
             JScrollPane nurseScrollPane = new JScrollPane(nurseTable);
+            asgui.setNurseTable(nurseTable);
+            asgui.setNurseScrollPane(nurseScrollPane);
 
             int tabIndex = asgui.getTabIndex("Nurse");
             if(tabIndex != -1) {
@@ -100,6 +102,9 @@ public class NurseController implements ActionListener{
             JTable nurseShiftTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
             JScrollPane nurseShiftScrollPane = new JScrollPane(nurseShiftTable);
 
+            asgui.setNurseShiftTable(nurseShiftTable);
+            asgui.setNurseShiftScrollPane(nurseShiftScrollPane);
+
             int tabIndex = asgui.getTabIndex("Nurse Shifts");
             if(tabIndex != -1) {
                 asgui.getTabbedPane().setComponentAt(tabIndex, nurseShiftScrollPane);
@@ -114,8 +119,17 @@ public class NurseController implements ActionListener{
             if (!currentLabel.equals("Nurse Records") && !currentLabel.equals("Nurse Shift Records")) return;
 
             System.out.println("Delete Button clicked for " + currentLabel + "!");
-            JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-            if (table == null) return;
+            JTable table;
+            if (currentLabel.equals("Nurse Records")) {
+                table = asgui.getNurseTable();
+            } else {
+                table = asgui.getNurseShiftTable();
+            }
+
+            if (table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
 
@@ -158,8 +172,17 @@ public class NurseController implements ActionListener{
         else if(e.getSource() == asgui.getUpdateButton())
         {
             String currentLabel = asgui.getTableLabel().getText();
-            JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-            if (table == null) return;
+            JTable table;
+            if (currentLabel.equals("Nurse Records")) {
+                table = asgui.getNurseTable();
+            } else {
+                table = asgui.getNurseShiftTable();
+            }
+
+            if (table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             List<Object> selectedData = asgui.getSelectedRowData(table);
             if (selectedData == null) return;

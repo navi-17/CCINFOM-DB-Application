@@ -83,7 +83,7 @@ public class PatientManagement {
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connection to database successful!");
 
-            String sql = "UPDATE patient SET p_lastname = ?, p_firstname = ?, birth_date = ?, contact_no = ?, sex = ?, status = ? WHERE patient_id = ?";
+            String sql = "UPDATE patient SET p_lastname = ?, p_firstname = ?, birth_date = ?, contact_no = ?, sex = ?, p_status = ? WHERE patient_id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, patient.getLastName());
             pstmt.setString(2, patient.getFirstName());

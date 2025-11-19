@@ -40,7 +40,7 @@ public class DischargeController implements ActionListener{
                 data[i][0] = false;
                 data[i][1] = d.getDischargeID();
                 data[i][2] = d.getAdmissionID();
-                data[i][3] = d.getDischargeID();
+                data[i][3] = d.getDischargeDate();
             }
 
             String[] attributes = {" ", "Discharge ID", "Admission ID", "Discharge Date"};
@@ -53,8 +53,10 @@ public class DischargeController implements ActionListener{
             ); //1226 total = 106 checkbox, 150 ID, 970 left
 
             JTable dischargeTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
-			asgui.setActionListeners(this);
             JScrollPane dischargeScrollPane = new JScrollPane(dischargeTable);
+
+            asgui.setDischargeTable(dischargeTable);
+            asgui.setDischargeScrollPane(dischargeScrollPane);
 
             int tabIndex = asgui.getTabIndex("Discharges");
             if(tabIndex != -1) {
@@ -68,8 +70,11 @@ public class DischargeController implements ActionListener{
 		{
 			if (!asgui.getTableLabel().getText().equals("Discharge Records")) return;
 			System.out.println("Delete Button clicked for Discharge!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getDischargeTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
 			if (selectedIDs.isEmpty()) {
@@ -101,8 +106,11 @@ public class DischargeController implements ActionListener{
 		{
 			if (!asgui.getTableLabel().getText().equals("Discharge Records")) return;
 			System.out.println("Update Button clicked for Discharge!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getDischargeTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedData = asgui.getSelectedRowData(table);
 

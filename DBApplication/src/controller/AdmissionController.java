@@ -58,6 +58,10 @@ public class AdmissionController implements ActionListener{
             JTable admissionTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
             JScrollPane admissionSrollPane = new JScrollPane(admissionTable);
 
+            asgui.setAdmissionTable(admissionTable);
+            asgui.setAdmissionSrollPane(admissionSrollPane);
+
+
             int tabIndex = asgui.getTabIndex("Admissions");
             if(tabIndex != -1) {
                 asgui.getTabbedPane().setComponentAt(tabIndex, admissionSrollPane);
@@ -72,8 +76,11 @@ public class AdmissionController implements ActionListener{
 			if (!asgui.getTableLabel().getText().equals("Admission Records")) return;
             
 			System.out.println("Delete Button clicked for Admission!");
-            JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-            if (table == null) return;
+            JTable table = asgui.getAdmissionTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
             if (selectedIDs.isEmpty()) {
@@ -108,8 +115,11 @@ public class AdmissionController implements ActionListener{
 			
 			// IMPLEMENTED UPDATE LOGIC
 			System.out.println("Update Button clicked for Admission!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getAdmissionTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedData = asgui.getSelectedRowData(table);
 

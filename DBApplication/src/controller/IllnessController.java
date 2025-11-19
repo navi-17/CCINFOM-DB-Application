@@ -56,8 +56,10 @@ public class IllnessController implements ActionListener {
             ); //1226 total = 106 checkbox, 150 ID, 970 left
 
             JTable illnessTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
-			asgui.setActionListeners(this);
             JScrollPane illnessScrollPane = new JScrollPane(illnessTable);
+
+            asgui.setIllnessTable(illnessTable);
+            asgui.setIllnessScrollPane(illnessScrollPane);
 
             int tabIndex = asgui.getTabIndex("Illnesses");
             if(tabIndex != -1) {
@@ -71,8 +73,11 @@ public class IllnessController implements ActionListener {
 		{
 			if (!asgui.getTableLabel().getText().equals("Illness Records")) return;
 			System.out.println("Delete Button clicked for Ailment!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getIllnessTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
 			if (selectedIDs.isEmpty()) {
@@ -107,9 +112,11 @@ public class IllnessController implements ActionListener {
 			if (!asgui.getTableLabel().getText().equals("Illness Records")) return;
 
 			System.out.println("Update Button clicked for Ailment!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
-
+            JTable table = asgui.getIllnessTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 			List<Object> selectedData = asgui.getSelectedRowData(table);
 
 			if (selectedData != null) {

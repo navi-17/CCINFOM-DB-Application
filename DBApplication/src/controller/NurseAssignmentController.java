@@ -50,6 +50,9 @@ public class NurseAssignmentController implements ActionListener{
             JTable nurseAssignmentTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
             JScrollPane nurseAssignmentScrollPane = new JScrollPane(nurseAssignmentTable);
 
+            asgui.setNurseAssignmentTable(nurseAssignmentTable);
+            asgui.setNurseAssignmentScrollPane(nurseAssignmentScrollPane);
+
             int tabIndex = asgui.getTabIndex("Nurse Assignments");
             if(tabIndex != -1) {
                 asgui.getTabbedPane().setComponentAt(tabIndex, nurseAssignmentScrollPane);
@@ -70,8 +73,11 @@ public class NurseAssignmentController implements ActionListener{
 			if (!asgui.getTableLabel().getText().equals("Nurse Assignment Records")) return;
 
 			System.out.println("Update Button clicked for Nurse Assignment!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getNurseAssignmentTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedData = asgui.getSelectedRowData(table);
 
@@ -108,5 +114,54 @@ public class NurseAssignmentController implements ActionListener{
 				}
 			}
 		}
+        else if(e.getSource() == asgui.getUpdateButton()) {
+            if (!"Nurse Assignment Records".equals(asgui.getTableLabel().getText())) return;
+
+            JTable table = asgui.getNurseAssignmentTable();
+            if (table == null) return;
+
+            int checkedRow = -1;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                Boolean checked = (Boolean) table.getValueAt(i, 0);
+                if (Boolean.TRUE.equals(checked)) {
+                    if (checkedRow != -1) {
+                        JOptionPane.showMessageDialog(asgui, "Please select only one row to update.", "Multiple Selection", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    checkedRow = i;
+                }
+            }
+            if (checkedRow == -1) {
+                JOptionPane.showMessageDialog(asgui, "Please select a row to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            try {
+                int naID = (int) table.getValueAt(checkedRow, 1);
+                int nsID = Integer.parseInt(table.getValueAt(checkedRow, 2).toString());
+                int pID = Integer.parseInt(table.getValueAt(checkedRow, 3).toString());
+
+                Date dateAssigned = Date.valueOf(table.getValueAt(checkedRow, 4).toString());
+                Date assignedUntil = null;
+                Object assignedUntilObj = table.getValueAt(checkedRow, 5);
+                if (assignedUntilObj != null && !assignedUntilObj.toString().trim().isEmpty()) {
+                    assignedUntil = Date.valueOf(assignedUntilObj.toString());
+                }
+
+                NurseAssignment selectedAssignment = new NurseAssignment(nsID, pID, dateAssigned, assignedUntil);
+                selectedAssignment.setAssignmentID(naID);
+
+                UpdateNurseAssignmentDialog updateDialog = new UpdateNurseAssignmentDialog(asgui, selectedAssignment);
+                updateDialog.setVisible(true);
+
+                // Refresh table
+                asgui.getnAssignmentButton().doClick();
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(asgui, "Error processing selected Assignment data.", "Data Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        }
+
     }
 }

@@ -101,6 +101,8 @@ public class ASGui extends JFrame{
     private List<Component> allTabContents;
     private List<String> allTabTitles;
 
+    JScrollPane patientScrollPane;
+
 
     private static Font RobotoRegular;
     private static Font RobotoBold;
@@ -1280,4 +1282,225 @@ public class ASGui extends JFrame{
     {
         buttonValue = newValue;
     }
+
+    public JScrollPane getPatientScrollPane()
+    {
+        return patientScrollPane;
+    }
+
+    public void setPatientScrollPane(JScrollPane scrollPane)
+    {
+        patientScrollPane = scrollPane;
+    }
+
+    private JTable patientTable;
+    public void setCurrentPatientTable(JTable table)
+    {
+        this.patientTable = table;
+    }
+
+    public JTable getCurrentPatientTable() {
+        return patientTable;
+    }
+
+    JTable physicianTable;
+    JScrollPane physicianScrollPane;
+
+    public JTable getPhysicianTable()
+    {
+        return physicianTable;
+    }
+
+
+    public void setCurrentPhysicianTable(JTable table)
+    {
+        this.physicianTable = table;
+    }
+
+    public void setPhysicianScrollPane(JScrollPane scrollPane)
+    {
+        physicianScrollPane = scrollPane;
+    }
+
+    private JScrollPane physicianSchedulesScrollPane;
+    private JTable currentPhysicianSchedulesTable;
+
+    public void setPhysicianSchedulesScrollPane(JScrollPane scrollPane) {
+        this.physicianSchedulesScrollPane = scrollPane;
+    }
+
+    public void setCurrentPhysicianSchedulesTable(JTable table) {
+        this.currentPhysicianSchedulesTable = table;
+    }
+    public JTable getCurrentPhysicianSchedulesTable() {
+        return this.currentPhysicianSchedulesTable;
+    }
+
+    JTable nurseTable;
+    JScrollPane nurseScrollPane;
+
+    public void setNurseTable(JTable table)
+    {
+        this.nurseTable = table;
+    }
+
+    public void setNurseScrollPane(JScrollPane sp)
+    {
+        this.nurseScrollPane = sp;
+    }
+
+    public JTable getNurseTable()
+    {
+        return nurseTable;
+    }
+
+    JTable nurseShiftTable;
+    JScrollPane nurseShiftScrollPane;
+
+    public void setNurseShiftTable(JTable t)
+    {
+        this.nurseShiftTable = t;
+    }
+
+    public void setNurseShiftScrollPane(JScrollPane sp)
+    {
+        this.nurseShiftScrollPane = sp;
+    }
+
+    public JTable getNurseShiftTable()
+    {
+        return nurseShiftTable;
+    }
+
+    JTable treatmentTable;
+    JScrollPane treatmentScrollPane;
+
+    public void setTreatmentTable(JTable t)
+    {
+        treatmentTable = t;
+    }
+
+    public void setTreatmentScrollPane(JScrollPane sp)
+    {
+        treatmentScrollPane = sp;
+    }
+
+    public JTable getTreatmentTable()
+    {
+        return treatmentTable;
+    }
+
+    JTable wardTable;
+    JScrollPane wardScrollPane;
+
+    public void setWardTable(JTable t)
+    {
+        wardTable = t;
+    }
+
+    public void setWardScrollPane(JScrollPane sp)
+    {
+        wardScrollPane = sp;
+    }
+
+    public JTable getWardTable()
+    {
+        return wardTable;
+    }
+
+    JTable nurseAssignmentTable;
+    JScrollPane nurseAssignmentScrollPane;
+
+    public void setNurseAssignmentTable(JTable t)
+    {
+        nurseAssignmentTable = t;
+    }
+
+    public void setNurseAssignmentScrollPane(JScrollPane sp)
+    {
+        nurseAssignmentScrollPane = sp;
+    }
+
+    public JTable getNurseAssignmentTable()
+    {
+        return nurseAssignmentTable;
+    }
+
+    JTable medicineTable;
+    JScrollPane medicineScrollPane;
+
+    public void setMedicineTable(JTable t)
+    {
+        medicineTable = t;
+    }
+
+    public void setMedicineScrollPane(JScrollPane sp)
+    {
+        medicineScrollPane = sp;
+    }
+
+    public JTable getMedicineTable()
+    {
+        return medicineTable;
+    }
+
+    JTable illnessTable;
+    JScrollPane illnessScrollPane;
+
+    public void setIllnessTable(JTable t)
+    {
+        illnessTable = t;
+    }
+
+    public void setIllnessScrollPane(JScrollPane sp)
+    {
+        illnessScrollPane = sp;
+    }
+
+    public JTable getIllnessTable()
+    {
+        return illnessTable;
+    }
+
+    JTable dischargeTable;
+    JScrollPane dischargeScrollPane;
+
+    public void setDischargeTable(JTable t)
+    {
+        dischargeTable = t;
+    }
+
+    public void setDischargeScrollPane(JScrollPane sp)
+    {
+        dischargeScrollPane = sp;
+    }
+
+    public JTable getDischargeTable()
+    {
+        return dischargeTable;
+    }
+
+    JTable admissionTable;
+    JScrollPane admissionSrollPane;
+
+    public void setAdmissionTable(JTable t)
+    {
+        admissionTable = t;
+    }
+
+    public void setAdmissionSrollPane(JScrollPane sp)
+    {
+        admissionSrollPane = sp;
+    }
+
+    public JTable getAdmissionTable()
+    {
+        return admissionTable;
+    }
+
+
+
+
+
+
 }

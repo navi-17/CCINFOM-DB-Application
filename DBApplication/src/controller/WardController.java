@@ -53,6 +53,8 @@ public class WardController implements ActionListener {
 
             JTable wardTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
             JScrollPane wardScrollPane = new JScrollPane(wardTable);
+            asgui.setWardTable(wardTable);
+            asgui.setWardScrollPane(wardScrollPane);
 
             int tabIndex = asgui.getTabIndex("Wards");
             if(tabIndex != -1) {
@@ -67,8 +69,11 @@ public class WardController implements ActionListener {
 			if (!asgui.getTableLabel().getText().equals("Ward Records")) return;
 
 			System.out.println("Delete Button clicked for Ward!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getWardTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
 			if (selectedIDs.isEmpty()) {
@@ -102,8 +107,11 @@ public class WardController implements ActionListener {
 			if (!asgui.getTableLabel().getText().equals("Ward Records")) return;
 
 			System.out.println("Update Button clicked for Ward!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getWardTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedData = asgui.getSelectedRowData(table);
 
