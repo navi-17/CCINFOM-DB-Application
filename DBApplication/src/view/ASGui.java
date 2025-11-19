@@ -229,7 +229,7 @@ public class ASGui extends JFrame{
         this.setTitle("AdmitSys");
         this.setLayout(null);
 		// MAKE SIZE DYNAMIC
-        this.setSize(1920, 1080);
+        this.setSize(1646, 1029);
 		this.setResizable(true);
 		this.setExtendedState(Frame.NORMAL);
 		this.setUndecorated(false);
