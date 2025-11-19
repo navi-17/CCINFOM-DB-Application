@@ -3,6 +3,7 @@ import model.Discharge;
 import model.DischargeManagement;
 
 import view.ASGui;
+import view.UpdateDischargeDialog;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +28,10 @@ public class DischargeController implements ActionListener{
         {
             asgui.setButtonValue(7);
             asgui.setCreateButtonText("Add Discharge");
+<<<<<<< HEAD
+=======
+            asgui.showOnlyTabs("Discharges");
+>>>>>>> 9fe09b628216d5b2658392e6a7fc3de7564eb9b7
             asgui.setTableLabel("Discharge Records");
             System.out.println("DischargeAilment Button clicked!");
             List<Discharge> discharges = dischargeManagement.viewDischargeRecord();
@@ -38,7 +43,7 @@ public class DischargeController implements ActionListener{
                 data[i][0] = false;
                 data[i][1] = d.getDischargeID();
                 data[i][2] = d.getAdmissionID();
-                data[i][3] = d.getDischargeID();
+                data[i][3] = d.getDischargeDate();
             }
 
             String[] attributes = {" ", "Discharge ID", "Admission ID", "Discharge Date"};
@@ -50,13 +55,29 @@ public class DischargeController implements ActionListener{
                     3, 373  //Date
             ); //1226 total = 106 checkbox, 150 ID, 970 left
 
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JTable dischargeTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JScrollPane dischargeScrollPane = new JScrollPane(dischargeTable);
+
+            asgui.setDischargeTable(dischargeTable);
+            asgui.setDischargeScrollPane(dischargeScrollPane);
+
+            int tabIndex = asgui.getTabIndex("Discharges");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, dischargeScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Discharges' not found!");
+            }
         }
 		else if(e.getSource() == asgui.getDeleteButton()) 
 		{
+			if (!asgui.getTableLabel().getText().equals("Discharge Records")) return;
 			System.out.println("Delete Button clicked for Discharge!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getDischargeTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
 			if (selectedIDs.isEmpty()) {
@@ -86,7 +107,44 @@ public class DischargeController implements ActionListener{
 		}
 		else if(e.getSource() == asgui.getUpdateButton()) 
 		{
-			JOptionPane.showMessageDialog(asgui, "Update functionality for Discharge is not yet implemented.", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+			if (!asgui.getTableLabel().getText().equals("Discharge Records")) return;
+			System.out.println("Update Button clicked for Discharge!");
+            JTable table = asgui.getDischargeTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+			List<Object> selectedData = asgui.getSelectedRowData(table);
+
+			if (selectedData != null) {
+				// Check column count (4 columns including checkbox)
+				if (table.getModel().getColumnCount() != 4) {
+					JOptionPane.showMessageDialog(asgui, "Update function available only for Discharge Records view.", "Update Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				try {
+					// Extract data
+					int dischargeID = (int) selectedData.get(1);
+					int admissionID = Integer.parseInt(selectedData.get(2).toString()); 
+					String dischargeDate = (String) selectedData.get(3);
+					
+					// Create Discharge object
+					Discharge selectedDischarge = new Discharge(admissionID, dischargeDate);
+					selectedDischarge.setDischargeID(dischargeID);
+					
+					// Open the Update Dialog
+					UpdateDischargeDialog updateDialog = new UpdateDischargeDialog(asgui, selectedDischarge);
+					updateDialog.setVisible(true);
+
+					// Refresh the table
+					asgui.getDischargeButton().doClick();
+
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(asgui, "Error processing selected Discharge data.", "Data Error", JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
+				}
+			}
 		}
     }
 }

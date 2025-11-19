@@ -16,6 +16,10 @@ public class ASMain{
         AdmissionController admissionController = new AdmissionController(gui);
         TreatmentController treatmentController = new TreatmentController(gui);
         DischargeController dischargeController = new DischargeController(gui);
+<<<<<<< HEAD
+=======
+        SearchController searchController = new SearchController(gui);
+>>>>>>> 9fe09b628216d5b2658392e6a7fc3de7564eb9b7
         CreateController createController = new CreateController(gui);
     }
 }

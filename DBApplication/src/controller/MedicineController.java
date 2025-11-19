@@ -3,6 +3,7 @@ import model.Medicine;
 import model.MedicineManagement;
 
 import view.ASGui;
+import view.UpdateMedicineDialog;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,8 +21,6 @@ public class MedicineController implements ActionListener{
         gui.setActionListeners(this);
     }
 
-
-
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -29,36 +28,50 @@ public class MedicineController implements ActionListener{
         {
             asgui.setButtonValue(4);
             asgui.setCreateButtonText("Add Medicine");
+<<<<<<< HEAD
+=======
+            asgui.showOnlyTabs("Medicines", "Medicine Related Records");
+>>>>>>> 9fe09b628216d5b2658392e6a7fc3de7564eb9b7
             asgui.setTableLabel("Medicine Records");
-            System.out.println("Ailment Button clicked!");
+            System.out.println("Medicine button clicked!");
             List<Medicine> medicines = medicineManagement.viewMedicineRecord();
+            
+            // Data preparation for JTable
             Object[][] data = new Object[medicines.size()][4];
-            for(int i = 0; i < medicines.size(); i++)
-            {
+            for(int i = 0; i < medicines.size(); i++) {
                 Medicine m = medicines.get(i);
-
-                data[i][0] = false;
+                data[i][0] = false; // Checkbox column
                 data[i][1] = m.getMedicineID();
                 data[i][2] = m.getMedicineName();
                 data[i][3] = m.getStockQty();
             }
-
             String[] attributes = {" ", "Medicine ID", "Medicine name", "Stock_qty"};
+            Map<Integer, Integer> colWidths = Map.of(0, 106, 1, 373, 2, 373, 3, 373);
+            
+            // VIEW Call: Create and display table
+            JTable medicineTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JScrollPane medicineScrollPane = new JScrollPane(medicineTable);
 
-            Map<Integer, Integer> colWidths = Map.of(
-                    0, 106,  // checkbox
-                    1, 373,  // ID
-                    2, 373,  // Name
-                    3, 373  //stock
-            ); //1226 total = 106 checkbox, 150 ID, 970 left
+            asgui.setMedicineTable(medicineTable);
+            asgui.setMedicineScrollPane(medicineScrollPane);
 
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            int tabIndex = asgui.getTabIndex("Medicines");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, medicineScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Medicines' not found!");
+            }
         }
 		else if(e.getSource() == asgui.getDeleteButton()) 
 		{
+			if (!asgui.getTableLabel().getText().equals("Medicine Records")) return;
 			System.out.println("Delete Button clicked for Medicine!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getMedicineTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
 			if (selectedIDs.isEmpty()) {
@@ -84,12 +97,55 @@ public class MedicineController implements ActionListener{
 				}
 
 				JOptionPane.showMessageDialog(asgui, deletedCount + " medicine record(s) deleted successfully.", "Deletion Complete", JOptionPane.INFORMATION_MESSAGE);
-				asgui.getMedicineButton().doClick(); // Refresh
+				asgui.getMedicineButton().doClick(); // Refresh the table
 			}
 		}
 		else if(e.getSource() == asgui.getUpdateButton()) 
 		{
-			JOptionPane.showMessageDialog(asgui, "Update functionality for Medicine is not yet implemented.", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+            if (!asgui.getTableLabel().getText().equals("Medicine Records")) return;
+
+			System.out.println("Update Button clicked for Medicine!");
+            JTable table = asgui.getMedicineTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+			List<Object> selectedData = asgui.getSelectedRowData(table);
+
+			// Check if a single row is selected and data is available
+			if (selectedData != null && !selectedData.isEmpty()) {
+				// We expect 4 columns: Checkbox, ID, Name, StockQty
+				if (table.getModel().getColumnCount() != 4) {
+					JOptionPane.showMessageDialog(asgui, "Update function available only for Medicine Records view.", "Update Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				try {
+					// Index 1 is Medicine ID, Index 2 is Name, Index 3 is Stock Qty
+					int medicineID = (int) selectedData.get(1);
+					String name = (String) selectedData.get(2);
+					int stockQty = Integer.parseInt(selectedData.get(3).toString());
+					
+					// Create a Medicine object with the current data
+					Medicine selectedMedicine = new Medicine(name, stockQty);
+					selectedMedicine.setMedicineID(medicineID);
+					
+					// Open the Update Dialog
+					UpdateMedicineDialog updateDialog = new UpdateMedicineDialog(asgui, selectedMedicine);
+					updateDialog.setVisible(true);
+					
+					// Refresh the table after the dialog closes (assuming the dialog handles persistence)
+					asgui.getMedicineButton().doClick(); 
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(asgui, "Error processing selected Medicine data.", "Data Error", JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
+				}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(asgui, "Please select one row to update.", "Selection Error", JOptionPane.WARNING_MESSAGE);
+			}
 		}
     }
 }

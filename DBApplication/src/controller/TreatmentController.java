@@ -3,11 +3,14 @@ import model.Treatment;
 import model.TreatmentManagement;
 
 import view.ASGui;
+import view.UpdateTreatmentDialog;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.sql.Date;
 
 public class TreatmentController implements ActionListener{
     private TreatmentManagement treatmentManagement;
@@ -17,7 +20,7 @@ public class TreatmentController implements ActionListener{
     {
         treatmentManagement = new TreatmentManagement();
         this.asgui = gui;
-        asgui.setActionListeners(this);
+        gui.setActionListeners(this);
     }
 
     @Override
@@ -27,6 +30,10 @@ public class TreatmentController implements ActionListener{
         {
             asgui.setButtonValue(10);
             asgui.setCreateButtonText("Add Treatment");
+<<<<<<< HEAD
+=======
+            asgui.showOnlyTabs("Treatments");
+>>>>>>> 9fe09b628216d5b2658392e6a7fc3de7564eb9b7
             asgui.setTableLabel("Treatment Records");
             System.out.println("Treatment Button clicked!");
             List<Treatment> treatments = treatmentManagement.viewTreatmentRecords();
@@ -49,56 +56,148 @@ public class TreatmentController implements ActionListener{
             String[] attributes = {" ", "Treatment ID", "Nurse Assignment ID", "Diagnosis ID", "Medicine ID", "AP ID", "Performed by", "Treatment Date", "Treatment Procedure", "Remarks"};
 
             Map<Integer, Integer> colWidths = Map.of(
-                    0, 106,  // checkbox
-                    1, 120,  // Admission ID
-                    2, 120,  // Patient ID
-                    3, 120,  //Ward ID
-                    4, 120,
-                    5, 120,
-                    6, 120,
-                    7, 120,
-                    8, 200,
-                    9, 200
+                    0, 106, 1, 120, 2, 120, 3, 120, 4, 120, 5, 120, 6, 120, 7, 120, 8, 200, 9, 200
+            );
 
-            ); //1226 total = 106 checkbox, 150 ID, 970 left
+            JTable treatmentTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JScrollPane treatmentScrollPane = new JScrollPane(treatmentTable);
+            asgui.setTreatmentTable(treatmentTable);
+            asgui.setTreatmentScrollPane(treatmentScrollPane);
 
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            int tabIndex = asgui.getTabIndex("Treatments");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, treatmentScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Treatments' not found!");
+            }
         }
 		else if(e.getSource() == asgui.getDeleteButton()) 
 		{
-			System.out.println("Delete Button clicked for Treatment!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            if (!"Treatment Records".equals(asgui.getTableLabel().getText())) return;
 
-			List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
-			if (selectedIDs.isEmpty()) {
-				JOptionPane.showMessageDialog(asgui, "No rows selected for deletion.", "Warning", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+            JTable table = asgui.getTreatmentTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-			int confirm = JOptionPane.showConfirmDialog(asgui, 
-				"Are you sure you want to delete the selected " + selectedIDs.size() + " treatment record(s)?", 
-				"Confirm Deletion", JOptionPane.YES_NO_OPTION);
+            List<Object> selectedIDs = new ArrayList<>();
+            for(int i = 0; i < table.getRowCount(); i++) {
+                Boolean checked = (Boolean) table.getValueAt(i, 0);
+                if(Boolean.TRUE.equals(checked)) {
+                    selectedIDs.add(table.getValueAt(i, 1)); // patient ID
+                }
+            }
 
-			if (confirm == JOptionPane.YES_OPTION) {
-				int deletedCount = 0;
-				for (Object id : selectedIDs) {
-					try {
-						if (treatmentManagement.deleteTreatmentRecord((int) id)) {
-							deletedCount++;
-						}
-					} catch (Exception ex) {
-						System.err.println("Error deleting Treatment ID " + id + ": " + ex.getMessage());
-					}
-				}
+            if(selectedIDs.isEmpty()) {
+                JOptionPane.showMessageDialog(asgui, "No rows selected for deletion.", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-				JOptionPane.showMessageDialog(asgui, deletedCount + " treatment record(s) deleted successfully.", "Deletion Complete", JOptionPane.INFORMATION_MESSAGE);
-				asgui.getTreatmentButton().doClick(); // Refresh
-			}
+            int confirm = JOptionPane.showConfirmDialog(asgui,
+                    "Are you sure you want to delete the selected " + selectedIDs.size() + " treatment record(s)?",
+                    "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+
+            if(confirm == JOptionPane.YES_OPTION) {
+                int deletedCount = 0;
+                for(Object id : selectedIDs) {
+                    try {
+                        if(treatmentManagement.deleteTreatmentRecord((int) id)) {
+                            deletedCount++;
+                        }
+                    } catch(Exception ex) {
+                        System.err.println("Error deleting tretment ID " + id + ": " + ex.getMessage());
+                    }
+                }
+                JOptionPane.showMessageDialog(asgui, deletedCount + " treatment record(s) deleted successfully.", "Deletion Complete", JOptionPane.INFORMATION_MESSAGE);
+                asgui.getPatientButton().doClick(); // refresh table
+            }
 		}
 		else if(e.getSource() == asgui.getUpdateButton()) 
 		{
-			JOptionPane.showMessageDialog(asgui, "Update functionality for Treatment is not yet implemented.", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
-		}
+            if (!"Treatment Records".equals(asgui.getTableLabel().getText())) return;
+
+            JTable table = asgui.getTreatmentTable(); // get the stored reference
+            if (table == null) return;
+
+            int checkedRow = -1;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                Boolean checked = (Boolean) table.getValueAt(i, 0);
+                if (Boolean.TRUE.equals(checked)) {
+                    if (checkedRow != -1) {
+                        JOptionPane.showMessageDialog(asgui, "Please check only one row to update.", "Multiple Selection", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    checkedRow = i;
+                }
+            }
+
+            if (checkedRow == -1) {
+                JOptionPane.showMessageDialog(asgui, "Please check a row to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            try {
+                // Extract data from the checked row
+                int treatmentID = (int) table.getValueAt(checkedRow, 1);
+                int nurseAssignmentID = Integer.parseInt(table.getValueAt(checkedRow, 2).toString());
+                int diagnosisID = Integer.parseInt(table.getValueAt(checkedRow, 3).toString());
+                int medicineID = Integer.parseInt(table.getValueAt(checkedRow, 4).toString());
+
+                Integer assignedPhysicianID = null;
+                if (table.getValueAt(checkedRow, 5) != null && !table.getValueAt(checkedRow, 5).toString().trim().isEmpty()) {
+                    try {
+                        assignedPhysicianID = Integer.parseInt(table.getValueAt(checkedRow, 5).toString());
+                    } catch (NumberFormatException nfe) {
+                        assignedPhysicianID = null;
+                    }
+                }
+
+                String performedBy = (String) table.getValueAt(checkedRow, 6);
+
+                Object dateObj = table.getValueAt(checkedRow, 7);
+                java.sql.Date treatmentDate;
+
+                if (dateObj instanceof java.sql.Date) {
+                    treatmentDate = (java.sql.Date) dateObj;  // already correct type
+                } else if (dateObj instanceof java.util.Date) {
+                    treatmentDate = new java.sql.Date(((java.util.Date) dateObj).getTime());
+                } else if (dateObj instanceof String) {
+                    try {
+                        treatmentDate = java.sql.Date.valueOf(((String) dateObj).trim());
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(asgui,
+                                "Invalid treatment date. Use yyyy-MM-dd format.",
+                                "Invalid Date", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(asgui,
+                            "Unknown date format in table.",
+                            "Invalid Date", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                String procedure = (String) table.getValueAt(checkedRow, 8);
+                String remarks = (String) table.getValueAt(checkedRow, 9);
+
+                Treatment selectedTreatment = new Treatment(nurseAssignmentID, diagnosisID, medicineID, treatmentDate, procedure, remarks, assignedPhysicianID, performedBy);
+                selectedTreatment.setTreatmentID(treatmentID);
+
+                UpdateTreatmentDialog updateDialog = new UpdateTreatmentDialog(asgui, selectedTreatment);
+                updateDialog.setVisible(true);
+
+                // Refresh the table
+                asgui.getTreatmentButton().doClick();
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(asgui, "Error processing selected Treatment data.", "Data Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+
+
+
+        }
     }
 }

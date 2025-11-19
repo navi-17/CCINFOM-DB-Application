@@ -20,7 +20,7 @@ public class WardManagement {
             System.out.println("Connection to database successful!");
 
             //2. Prepare SQL Statement --> store in PreparedStatement (dont forget to put alias for column name so u can fetch the value)
-            String sql = "INSERT INTO ward (floor, ward_number, w_status) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO ward (floor, ward_no, w_status) VALUES (?, ?, ?)";
             pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, ward.getFloor());
@@ -87,7 +87,7 @@ public class WardManagement {
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connection to database successful!");
 
-            String sql = "UPDATE ward SET floor = ?, ward_number = ?, w_status = ? WHERE ward_id = ?";
+            String sql = "UPDATE ward SET floor = ?, ward_no = ?, w_status = ? WHERE ward_id = ?";
             pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, ward.getFloor()); // new floor
@@ -168,7 +168,53 @@ public class WardManagement {
         }
     }
 
-        public static void main(String[] args){
+
+    public List<Object[]> wardRelatedRecord(int id)
+    {
+        List<Object[]> records = new ArrayList<>();
+        try{
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connection to database successful!");
+
+            String sql = "SELECT\n" +
+                    "    w.ward_no,\n" +
+                    "    w.floor,\n" +
+                    "    CONCAT (p.p_lastname, ', ', p.p_firstname) AS admitted_patient,\n" +
+                    "    CONCAT (n.n_lastname, ', ', n.n_firstname) AS assigned_nurse\n" +
+                    "FROM ward w\n" +
+                    "LEFT JOIN admission a ON w.ward_id = a.ward_id\n" +
+                    "LEFT JOIN  patient p ON a.patient_id = p.patient_id\n" +
+                    "LEFT JOIN  nurse_assignment na ON na.patient_id = p.patient_id\n" +
+                    "LEFT JOIN  nurse_shift ns ON na.nurseShift_id = ns.nurseShift_id\n" +
+                    "LEFT JOIN  nurse n ON ns.nurse_id = n.nurse_id\n" +
+                    "WHERE w.ward_id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, id);
+
+            ResultSet rs = pstmt.executeQuery();// used for queries that returns result
+            while(rs.next())
+            {
+                Object[] row = new Object[4];
+                row[0] = rs.getInt("ward_no");
+                row[1] = rs.getString("floor");
+                row[2] = rs.getString("admitted_patient");
+                row[3] = rs.getString("assigned_nurse");
+                records.add(row);
+            }
+
+            pstmt.close();
+            rs.close();
+            conn.close();
+
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return records;
+    }
+
+
+    public static void main(String[] args){
         WardManagement wardManagement = new WardManagement();
 
        // Test create ward

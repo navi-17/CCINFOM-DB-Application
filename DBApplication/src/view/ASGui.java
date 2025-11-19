@@ -84,21 +84,39 @@ public class ASGui extends JFrame{
 
     private JTextField searchTextField;
 
-    private ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/backgroundImage.png"));
-    private ImageIcon logoImage = new ImageIcon(getClass().getResource("/globeIcon.png"));
-    private ImageIcon houseIcon = new ImageIcon(getClass().getResource("/houseIcon.png"));
-    private ImageIcon personIcon = new ImageIcon(getClass().getResource("/personIcon.png"));
-    private ImageIcon profileIcon = new ImageIcon(getClass().getResource("/profileIcon.png"));
-    private ImageIcon settingsIcon = new ImageIcon(getClass().getResource("/settingsIcon.png"));
-    private ImageIcon bellIcon = new ImageIcon(getClass().getResource("/bellIcon.png"));
-    private ImageIcon dropdownIcon = new ImageIcon(getClass().getResource("/dropdownIcon.png"));
-    private ImageIcon dropdownIcon2 = new ImageIcon(getClass().getResource("/dropdownIcon2.png"));
-    private ImageIcon searchIcon = new ImageIcon(getClass().getResource("/searchIcon.png"));
-    private ImageIcon cancelIcon = new ImageIcon(getClass().getResource("/cancelIcon.png"));
+	private String lastViewButtonName = "";
+
+    private ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/resources/backgroundImage.png"));
+    private ImageIcon logoImage = new ImageIcon(getClass().getResource("/resources/globeIcon.png"));
+    private ImageIcon houseIcon = new ImageIcon(getClass().getResource("/resources/houseIcon.png"));
+    private ImageIcon personIcon = new ImageIcon(getClass().getResource("/resources/personIcon.png"));
+    private ImageIcon profileIcon = new ImageIcon(getClass().getResource("/resources/profileIcon.png"));
+    private ImageIcon settingsIcon = new ImageIcon(getClass().getResource("/resources/settingsIcon.png"));
+    private ImageIcon bellIcon = new ImageIcon(getClass().getResource("/resources/bellIcon.png"));
+    private ImageIcon dropdownIcon = new ImageIcon(getClass().getResource("/resources/dropdownIcon.png"));
+    private ImageIcon dropdownIcon2 = new ImageIcon(getClass().getResource("/resources/dropdownIcon2.png"));
+    private ImageIcon searchIcon = new ImageIcon(getClass().getResource("/resources/searchIcon.png"));
+    private ImageIcon cancelIcon = new ImageIcon(getClass().getResource("/resources/cancelIcon.png"));
+
+    private List<Component> allTabContents;
+    private List<String> allTabTitles;
+
+    JScrollPane patientScrollPane;
+
 
     private static Font RobotoRegular;
     private static Font RobotoBold;
     private static Font MontserratBold;
+
+	// ADDED: Getter/Setter for the active view name
+	public String getLastViewButtonName() {
+        return lastViewButtonName;
+    }
+
+	public JLabel getTableLabel()
+	{
+		return tableLabel;
+	}
 
     public ASGui()
     {
@@ -166,17 +184,38 @@ public class ASGui extends JFrame{
         scrollPane = new JScrollPane();
 
         // JTabbedPane
+//        String[] tabs = {"Patients", "Illness", "Treatment", "Physician", "Nurse"};
+//
+//        JScrollPane[] placeholders = new JScrollPane[tabs.length];
+//
+//        for (int i = 0; i < placeholders.length; i++)
+//        {
+//            placeholders[i] = null; // optional, Java initializes to null by default
+//        }
+//
+//        tabbedPane = createTabbedPane(tabs, placeholders);
+//        tabbedPane.setBounds(-1, 1, 1230, 785); // Set size here
 
-        String[] tabs = {"Patients", "Illness", "Treatment", "Physician", "Nurse"};
-
+        String[] tabs = {"Patients", "Patient Related Records", "Illnesses", "Illness Related Records", "Wards", "Physician Schedules",
+                "Ward Related Records", "Nurse", "Nurse Related Records", "Physician", "Physician Related Records", "Nurse Shifts",
+                "Medicines", "Medicine Related Records", "Diagnosis", "Nurse Assignments", "Admissions", "Treatments", "Discharges"};
         JScrollPane[] placeholders = new JScrollPane[tabs.length];
-        for (int i = 0; i < placeholders.length; i++)
-        {
-            placeholders[i] = null; // optional, Java initializes to null by default
+        for (int i = 0; i < placeholders.length; i++) {
+            placeholders[i] = new JScrollPane(); // empty placeholder
+        }
+        tabbedPane = createTabbedPane(tabs, placeholders);
+        tabbedPane.setBounds(-1, 1, 1230, 785);
+        allTabContents = new ArrayList<>();
+        allTabTitles = new ArrayList<>();
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            allTabContents.add(tabbedPane.getComponentAt(i));
+            allTabTitles.add(tabbedPane.getTitleAt(i));
         }
 
-        tabbedPane = createTabbedPane(tabs, placeholders);
-        tabbedPane.setBounds(-1, 1, 1230, 785); // Set size here
+
+//        tabbedPane.removeAll(); //so that it wont show when you run it initally
+//        getScrollPane().add(tabbedPane);
+
 
 
         // Frames ------------------------------------------------
@@ -193,10 +232,11 @@ public class ASGui extends JFrame{
 
         this.setTitle("AdmitSys");
         this.setLayout(null);
-        this.setSize(screenWidth, screenHeight);
-        this.setResizable(false);
-        this.setExtendedState(Frame.MAXIMIZED_BOTH);
-        this.setUndecorated(true);
+		// MAKE SIZE DYNAMIC
+        this.setSize(1920, 1080);
+		this.setResizable(true);
+		this.setExtendedState(Frame.NORMAL);
+		this.setUndecorated(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
 
@@ -387,6 +427,7 @@ public class ASGui extends JFrame{
         });
 
         // Buttons -----------------------------------------------
+        buttonValue = 0;
 
         buttonValue = 0;
 
@@ -566,6 +607,7 @@ public class ASGui extends JFrame{
         searchButton.setContentAreaFilled(false);
         // searchButton.setBorderPainted(false);
         searchButton.setFocusable(false);
+
 
         cancelButton = new JButton();
         cancelButton.setBounds(270,5,20,20);
@@ -760,9 +802,9 @@ public class ASGui extends JFrame{
     }
 
     public void createFonts() {
-        RobotoRegular = loadFont("/RobotoRegular.ttf", 50f);
-        RobotoBold = loadFont("/RobotoBold.ttf", 50f);
-        MontserratBold = loadFont("/MontserratBold.ttf", 50f);
+        RobotoRegular = loadFont("/resources/RobotoRegular.ttf", 50f);
+        RobotoBold = loadFont("/resources/RobotoBold.ttf", 50f);
+        MontserratBold = loadFont("/resources/MontserratBold.ttf", 50f);
     }
 
     private Font loadFont(String path, float size) {
@@ -802,6 +844,7 @@ public class ASGui extends JFrame{
         createButton.addActionListener(listener);
         deleteButton.addActionListener(listener);
         updateButton.addActionListener(listener);
+        searchButton.addActionListener(listener);
     }
 
     public List<Object> getSelectedRowIDs(JTable table) {
@@ -868,6 +911,9 @@ public class ASGui extends JFrame{
         }
         return null;
     }
+
+
+
 
 
     public JTable createTable(
@@ -1032,17 +1078,17 @@ public class ASGui extends JFrame{
             columnWidths.forEach((index, width) -> table.getColumnModel().getColumn(index).setPreferredWidth(width));
         }
 
-        scrollPane.setViewportView(table);
-        scrollPane.setBounds(0, 0, 1226, 750);
-
-        tabbedPane.setComponentAt(0, scrollPane);
-        tabbedPane.revalidate();
-        tabbedPane.repaint();
+//        scrollPane.setViewportView(table);
+//        scrollPane.setBounds(0, 0, 1226, 750);
+//
+////        tabbedPane.setComponentAt(0, scrollPane);
+//        tabbedPane.revalidate();
+//        tabbedPane.repaint();
 
         return table;
     }
 
-    public static JTabbedPane createTabbedPane(String[] tabNames, JScrollPane[] tabContents)
+    public JTabbedPane createTabbedPane(String[] tabNames, JScrollPane[] tabContents)
     {
         // Aesthetic of Tabbed Pane
         if (tabNames.length != tabContents.length)
@@ -1097,6 +1143,30 @@ public class ASGui extends JFrame{
         }
 
         return tabbedPane;
+    }
+
+    public void showOnlyTabs(String... visibleTabs) {
+        tabbedPane.removeAll();
+
+        for (String name : visibleTabs) {
+            int idx = allTabTitles.indexOf(name);
+            if (idx != -1) {
+                tabbedPane.addTab(name, allTabContents.get(idx));
+            }
+        }
+
+        tabbedPane.revalidate();
+        tabbedPane.repaint();
+    }
+
+
+    public int getTabIndex(String tabName) {
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            if (tabbedPane.getTitleAt(i).equals(tabName)) {
+                return i;
+            }
+        }
+        return -1; // not found
     }
 
     public JButton getPatientButton()
@@ -1184,6 +1254,25 @@ public class ASGui extends JFrame{
         tableLabel.setText(tableName);
     }
 
+<<<<<<< HEAD
+=======
+    public JTabbedPane getTabbedPane()
+    {
+        return tabbedPane;
+    }
+
+
+    public JButton getSearchButton()
+    {
+        return searchButton;
+    }
+
+    public JTextField getSearchTextField()
+    {
+        return searchTextField;
+    }
+
+>>>>>>> 9fe09b628216d5b2658392e6a7fc3de7564eb9b7
     public void setCreateButtonText(String createText)
     {
         createButton.setText(createText);
@@ -1199,4 +1288,227 @@ public class ASGui extends JFrame{
         buttonValue = newValue;
     }
 
+<<<<<<< HEAD
+=======
+    public JScrollPane getPatientScrollPane()
+    {
+        return patientScrollPane;
+    }
+
+    public void setPatientScrollPane(JScrollPane scrollPane)
+    {
+        patientScrollPane = scrollPane;
+    }
+
+    private JTable patientTable;
+    public void setCurrentPatientTable(JTable table)
+    {
+        this.patientTable = table;
+    }
+
+    public JTable getCurrentPatientTable() {
+        return patientTable;
+    }
+
+    JTable physicianTable;
+    JScrollPane physicianScrollPane;
+
+    public JTable getPhysicianTable()
+    {
+        return physicianTable;
+    }
+
+
+    public void setCurrentPhysicianTable(JTable table)
+    {
+        this.physicianTable = table;
+    }
+
+    public void setPhysicianScrollPane(JScrollPane scrollPane)
+    {
+        physicianScrollPane = scrollPane;
+    }
+
+    private JScrollPane physicianSchedulesScrollPane;
+    private JTable currentPhysicianSchedulesTable;
+
+    public void setPhysicianSchedulesScrollPane(JScrollPane scrollPane) {
+        this.physicianSchedulesScrollPane = scrollPane;
+    }
+
+    public void setCurrentPhysicianSchedulesTable(JTable table) {
+        this.currentPhysicianSchedulesTable = table;
+    }
+    public JTable getCurrentPhysicianSchedulesTable() {
+        return this.currentPhysicianSchedulesTable;
+    }
+
+    JTable nurseTable;
+    JScrollPane nurseScrollPane;
+
+    public void setNurseTable(JTable table)
+    {
+        this.nurseTable = table;
+    }
+
+    public void setNurseScrollPane(JScrollPane sp)
+    {
+        this.nurseScrollPane = sp;
+    }
+
+    public JTable getNurseTable()
+    {
+        return nurseTable;
+    }
+
+    JTable nurseShiftTable;
+    JScrollPane nurseShiftScrollPane;
+
+    public void setNurseShiftTable(JTable t)
+    {
+        this.nurseShiftTable = t;
+    }
+
+    public void setNurseShiftScrollPane(JScrollPane sp)
+    {
+        this.nurseShiftScrollPane = sp;
+    }
+
+    public JTable getNurseShiftTable()
+    {
+        return nurseShiftTable;
+    }
+
+    JTable treatmentTable;
+    JScrollPane treatmentScrollPane;
+
+    public void setTreatmentTable(JTable t)
+    {
+        treatmentTable = t;
+    }
+
+    public void setTreatmentScrollPane(JScrollPane sp)
+    {
+        treatmentScrollPane = sp;
+    }
+
+    public JTable getTreatmentTable()
+    {
+        return treatmentTable;
+    }
+
+    JTable wardTable;
+    JScrollPane wardScrollPane;
+
+    public void setWardTable(JTable t)
+    {
+        wardTable = t;
+    }
+
+    public void setWardScrollPane(JScrollPane sp)
+    {
+        wardScrollPane = sp;
+    }
+
+    public JTable getWardTable()
+    {
+        return wardTable;
+    }
+
+    JTable nurseAssignmentTable;
+    JScrollPane nurseAssignmentScrollPane;
+
+    public void setNurseAssignmentTable(JTable t)
+    {
+        nurseAssignmentTable = t;
+    }
+
+    public void setNurseAssignmentScrollPane(JScrollPane sp)
+    {
+        nurseAssignmentScrollPane = sp;
+    }
+
+    public JTable getNurseAssignmentTable()
+    {
+        return nurseAssignmentTable;
+    }
+
+    JTable medicineTable;
+    JScrollPane medicineScrollPane;
+
+    public void setMedicineTable(JTable t)
+    {
+        medicineTable = t;
+    }
+
+    public void setMedicineScrollPane(JScrollPane sp)
+    {
+        medicineScrollPane = sp;
+    }
+
+    public JTable getMedicineTable()
+    {
+        return medicineTable;
+    }
+
+    JTable illnessTable;
+    JScrollPane illnessScrollPane;
+
+    public void setIllnessTable(JTable t)
+    {
+        illnessTable = t;
+    }
+
+    public void setIllnessScrollPane(JScrollPane sp)
+    {
+        illnessScrollPane = sp;
+    }
+
+    public JTable getIllnessTable()
+    {
+        return illnessTable;
+    }
+
+    JTable dischargeTable;
+    JScrollPane dischargeScrollPane;
+
+    public void setDischargeTable(JTable t)
+    {
+        dischargeTable = t;
+    }
+
+    public void setDischargeScrollPane(JScrollPane sp)
+    {
+        dischargeScrollPane = sp;
+    }
+
+    public JTable getDischargeTable()
+    {
+        return dischargeTable;
+    }
+
+    JTable admissionTable;
+    JScrollPane admissionSrollPane;
+
+    public void setAdmissionTable(JTable t)
+    {
+        admissionTable = t;
+    }
+
+    public void setAdmissionSrollPane(JScrollPane sp)
+    {
+        admissionSrollPane = sp;
+    }
+
+    public JTable getAdmissionTable()
+    {
+        return admissionTable;
+    }
+
+
+
+
+
+
+>>>>>>> 9fe09b628216d5b2658392e6a7fc3de7564eb9b7
 }

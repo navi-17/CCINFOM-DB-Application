@@ -4,6 +4,7 @@ import model.Ward;
 import model.WardManagement;
 
 import view.ASGui;
+import view.UpdateWardDialog;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +23,7 @@ public class WardController implements ActionListener {
     }
 
     @Override
+<<<<<<< HEAD
     public void actionPerformed(ActionEvent e)
     {
         if(e.getSource() == asgui.getWardButton())
@@ -35,31 +37,59 @@ public class WardController implements ActionListener {
             for(int i = 0; i < wards.size(); i++)
             {
                 Ward w = wards.get(i);
+=======
+	public void actionPerformed(ActionEvent e)
+	{
+		if(e.getSource() == asgui.getWardButton())
+		{
+            asgui.setButtonValue(3);
+            asgui.setCreateButtonText("Add Ward");
+            asgui.showOnlyTabs("Wards", "Ward Related Records");
+			asgui.setTableLabel("Ward Records");
+			System.out.println("Ward Button clicked!");
+			List<Ward> wards = wardManagement.viewWardRecords();
+			Object[][] data = new Object[wards.size()][5];
+			for(int i = 0; i < wards.size(); i++)
+			{
+				Ward w = wards.get(i);
+>>>>>>> 9fe09b628216d5b2658392e6a7fc3de7564eb9b7
 
-                data[i][0] = false;
-                data[i][1] = w.getWard_id();
-                data[i][2] = w.getWardNo();
-                data[i][3] = w.getFloor();
-                data[i][4] = w.getStatus();
+				data[i][0] = false;
+				data[i][1] = w.getWard_id();
+				data[i][2] = w.getWardNo();
+				data[i][3] = w.getFloor();
+				data[i][4] = w.getStatus();
+			}
+
+			String[] attributes = {" ", "Ward ID", "Ward number", "Floor", "Status"};
+
+			Map<Integer, Integer> colWidths = Map.of(
+					0, 106, 1, 150, 2, 323, 3, 323, 4, 323
+			);
+
+            JTable wardTable = asgui.createTable(data, attributes, -1, 0, -1, colWidths);
+            JScrollPane wardScrollPane = new JScrollPane(wardTable);
+            asgui.setWardTable(wardTable);
+            asgui.setWardScrollPane(wardScrollPane);
+
+            int tabIndex = asgui.getTabIndex("Wards");
+            if(tabIndex != -1) {
+                asgui.getTabbedPane().setComponentAt(tabIndex, wardScrollPane);
+                asgui.getTabbedPane().setSelectedIndex(tabIndex);
+            } else {
+                System.err.println("Tab 'Wards' not found!");
             }
-
-            String[] attributes = {" ", "Ward ID", "Ward number", "Floor", "Status"};
-
-            Map<Integer, Integer> colWidths = Map.of(
-                    0, 106,  // checkbox
-                    1, 150,  // ID
-                    2, 323,  // Name
-                    3, 323,  //contact
-                    4, 323 //specialization
-            ); //1226 total = 106 checkbox, 150 ID, 970 left
-
-            asgui.createTable(data, attributes, -1, 0, -1, colWidths);
         }
 		else if(e.getSource() == asgui.getDeleteButton()) 
 		{
+			if (!asgui.getTableLabel().getText().equals("Ward Records")) return;
+
 			System.out.println("Delete Button clicked for Ward!");
-			JTable table = (JTable) asgui.getScrollPane().getViewport().getView();
-			if (table == null) return;
+            JTable table = asgui.getWardTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 			List<Object> selectedIDs = asgui.getSelectedRowIDs(table);
 			if (selectedIDs.isEmpty()) {
@@ -67,16 +97,15 @@ public class WardController implements ActionListener {
 				return;
 			}
 
-			int confirm = JOptionPane.showConfirmDialog(asgui, 
-				"Are you sure you want to delete the selected " + selectedIDs.size() + " ward record(s)?", 
+			int confirm = JOptionPane.showConfirmDialog(asgui,
+				"Are you sure you want to delete the selected " + selectedIDs.size() + " ward record(s)?",
 				"Confirm Deletion", JOptionPane.YES_NO_OPTION);
 
 			if (confirm == JOptionPane.YES_OPTION) {
 				int deletedCount = 0;
 				for (Object id : selectedIDs) {
 					try {
-						// Create a dummy Ward object just to pass the ID for deletion
-						Ward wardToDelete = new Ward((int) id); 
+						Ward wardToDelete = new Ward((int) id);
 						if (wardManagement.deleteWard(wardToDelete)) {
 							deletedCount++;
 						}
@@ -89,9 +118,48 @@ public class WardController implements ActionListener {
 				asgui.getWardButton().doClick(); // Refresh
 			}
 		}
-		else if(e.getSource() == asgui.getUpdateButton()) 
+		else if(e.getSource() == asgui.getUpdateButton())
 		{
-			JOptionPane.showMessageDialog(asgui, "Update functionality for Ward is not yet implemented.", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+			if (!asgui.getTableLabel().getText().equals("Ward Records")) return;
+
+			System.out.println("Update Button clicked for Ward!");
+            JTable table = asgui.getWardTable();
+            if(table == null) {
+                JOptionPane.showMessageDialog(asgui, "No table data visible to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+			List<Object> selectedData = asgui.getSelectedRowData(table);
+
+			if (selectedData != null) {
+				if (table.getModel().getColumnCount() != 5) {
+					JOptionPane.showMessageDialog(asgui, "Update function available only for Ward Records view.", "Update Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				try {
+					// Extract data: [0:Chk] [1:ID] [2:Ward No] [3:Floor] [4:Status]
+					int wardID = (int) selectedData.get(1);
+					int wardNo = Integer.parseInt(selectedData.get(2).toString());
+					String floor = (String) selectedData.get(3);
+					String status = (String) selectedData.get(4);
+					
+					// Create Ward object
+					Ward selectedWard = new Ward(floor, wardNo, status);
+					selectedWard.setWard_id(wardID);
+					
+					// Open the Update Dialog
+					UpdateWardDialog updateDialog = new UpdateWardDialog(asgui, selectedWard);
+					updateDialog.setVisible(true);
+
+					// Refresh the table
+					asgui.getWardButton().doClick();
+
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(asgui, "Error processing selected Ward data.", "Data Error", JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
+				}
+			}
 		}
-    }
+	}
 }
