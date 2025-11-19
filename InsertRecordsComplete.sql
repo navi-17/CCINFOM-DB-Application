@@ -236,7 +236,7 @@ VALUES
 	-- Diagnosing physician = 2005 → Assign 2003 instead
 	(405, 205, 105, 5003, 2003, '2025-08-10',
 	 'Provided Ibuprofen for joint inflammation.',
-	 'Diagnosing Physician', 'Pain reduced; mobility improved.'),
+	 'Assigned Physician', 'Pain reduced; mobility improved.'),
 
 	-- 6 (Nurse performed)
 	(406, 206, 106, 5009, NULL, '2025-12-07',
