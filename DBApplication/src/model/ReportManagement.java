@@ -188,7 +188,6 @@ public class ReportManagement {
                 sql = "SELECT COUNT(DISTINCT patient_id) AS Total_Patients, " +
                         "CONCAT(p_lastname, ', ', p_firstname) AS patient_name" +
                         "FROM treatment_stats_view " +
-                        "LEFT JOIN diagnosis d ON diagnosis_id = diagnosis_id " +
                         "WHERE treatment_id = ? " +
                         "AND treatment_date = ? " +
                         "GROUP BY p_lastname, p_firstname;";
@@ -249,11 +248,80 @@ public class ReportManagement {
        // return totalPatients;
     }
 
+    public void getAdmissionRateReport (String type, String dateOrMonth, Integer year){
+        //int totalPatients = 0;
+
+        try{
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connection to database successful!");
+            String sql = "";
+
+
+            if(type.equalsIgnoreCase("day"))
+            {
+                sql = "SELECT COUNT(DISTINCT patient_id) AS total_patients," +
+                        "CONCAT(p_lastname, ', ', p_firstname) AS patient_name " +
+                        "FROM admission_rate_view " +
+                        "WHERE diagnosis_date = ? " +
+                        "GROUP BY p_lastname, p_firstname;";
+
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, dateOrMonth);
+
+
+            }
+            else if(type.equalsIgnoreCase("month"))
+            {
+                sql = "SELECT COUNT(DISTINCT patient_id) AS total_patients," +
+                        "CONCAT(p_lastname, ', ', p_firstname) AS patient_name " +
+                        "FROM admission_rate_view " +
+                        "WHERE MONTH(diagnosis_date) = ? " +
+                        "AND YEAR(diagnosis_date) = ? " +
+                        "GROUP BY p_lastname, p_firstname;";
+
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setInt(1, Integer.parseInt(dateOrMonth));
+                pstmt.setInt(2, year);
+            }
+            else
+            {
+                sql = "SELECT COUNT(DISTINCT patient_id) AS total_patients," +
+                        "CONCAT(p_lastname, ', ', p_firstname) AS patient_name " +
+                        "FROM admission_rate_view " +
+                        "WHERE YEAR(diagnosis_date) = ? " +
+                        "GROUP BY p_lastname, p_firstname;";
+
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setInt(1, year);
+            }
+
+            ResultSet rs = pstmt.executeQuery();// used for queries that returns result
+            MakePDF.exportToPDF(rs, "admission_rate_report.pdf");
+
+//            if(rs.next())
+//            {
+//                totalPatients = rs.getInt("Total_Patients");
+//                System.out.println(totalPatients);
+//            }
+
+            pstmt.close();
+            rs.close();
+            conn.close();
+
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+//        return totalPatients;
+    }
+
     public static void main(String[] args) throws SQLException {
         ReportManagement rm = new ReportManagement();
 
         //rm.getIllnessOccurrenceReport("year", "coronary artery disease", "none", 2025);
         //rm.getPhysiciansWorkloadReport("year", 1, "none", 2025);
-        rm.getTreatmentStatistics("year", 1, "none", 2025);
+        //rm.getTreatmentStatistics("year", 1, "none", 2025);
+        rm.getAdmissionRateReport("year", "none", 2025);
     }
+
 }
