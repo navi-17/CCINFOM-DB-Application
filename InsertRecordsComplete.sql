@@ -236,7 +236,7 @@ VALUES
 	-- Diagnosing physician = 2005 → Assign 2003 instead
 	(405, 205, 105, 5003, 2003, '2025-08-10',
 	 'Provided Ibuprofen for joint inflammation.',
-	 'Diagnosing Physician', 'Pain reduced; mobility improved.'),
+	 'Assigned Physician', 'Pain reduced; mobility improved.'),
 
 	-- 6 (Nurse performed)
 	(406, 206, 106, 5009, NULL, '2025-12-07',
@@ -249,9 +249,9 @@ VALUES
 	 'Diagnosing Physician', 'Patient calmer after treatment.'),
 
 	-- 8 (Diagnosing physician performed)
-	(408, 208, 108, 5003, NULL, '2025-05-22',
-	 'Administered Ibuprofen for migraine attack.',
-	 'Diagnosing Physician', 'Significant reduction in pain.'),
+	(411, 201, 101, 5001, 2001, '2025-06-12',
+	 'Follow-up consultation performed by diagnosing physician.',
+	 'Assigned Physician', 'Symptoms improving.'),
 
 	-- 9 (Nurse performed)
 	(409, 209, 109, 5002, NULL, '2025-10-16',

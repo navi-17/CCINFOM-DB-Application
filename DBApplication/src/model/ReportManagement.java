@@ -11,7 +11,7 @@ public class ReportManagement {
     private Connection conn;
     PreparedStatement pstmt;
 
-    public void getPhysiciansWorkloadReport(String type, int physicianID, String dateOrMonth, Integer year)
+   public void getPhysiciansWorkloadReport(String type, int physicianID, String dateOrMonth, Integer year)
     {
         //int totalPatients = 0;
 
