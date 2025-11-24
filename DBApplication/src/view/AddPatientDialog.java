@@ -86,7 +86,7 @@ public class AddPatientDialog extends JDialog {
         gbc.gridx = 0;
         formPanel.add(new JLabel("Gender:"), gbc);
         gbc.gridx = 1;
-        genderBox = new JComboBox<>(new String[]{"Male", "Female", "Other"});
+        genderBox = new JComboBox<>(new String[]{"M", "F"});
         formPanel.add(genderBox, gbc);
 
         // Contact Number
