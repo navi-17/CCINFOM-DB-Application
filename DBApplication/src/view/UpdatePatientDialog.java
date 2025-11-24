@@ -91,7 +91,7 @@ public class UpdatePatientDialog extends JDialog {
 		gbc.gridx = 0;
 		formPanel.add(new JLabel("Gender:"), gbc);
 		gbc.gridx = 1;
-		String[] genders = new String[]{"Male", "Female", "Other"};
+		String[] genders = new String[]{"M", "F"};
 		genderBox = new JComboBox<>(genders);
 		genderBox.setSelectedItem(patient.getSex());
 		formPanel.add(genderBox, gbc);
@@ -110,7 +110,7 @@ public class UpdatePatientDialog extends JDialog {
 		gbc.gridx = 0;
 		formPanel.add(new JLabel("Status:"), gbc);
 		gbc.gridx = 1;
-		String[] statuses = new String[]{"Admitted", "Discharged", "Pending"};
+		String[] statuses = new String[]{"Admitted", "Discharged"};
 		statusBox = new JComboBox<>(statuses);
 		statusBox.setSelectedItem(patient.getStatus());
 		formPanel.add(statusBox, gbc);
