@@ -1530,6 +1530,31 @@ public class ASGui extends JFrame{
         wholeScreen.repaint();
     }
 
+    private JTable diagnosisTable;
+    private JScrollPane diagnScrollPane;
+
+    public JTable getDiagnosisTable()
+    {
+        return diagnosisTable;
+    }
+
+    public JScrollPane getDiagnScrollPane()
+    {
+        return diagnScrollPane;
+    }
+
+    public void setDiagnScrollPane(JScrollPane d)
+    {
+        diagnScrollPane = d;
+    }
+
+    public void setDiagnTable(JTable t)
+    {
+        diagnosisTable = t;
+    }
+
+
+
 
 
 
